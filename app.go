@@ -7,20 +7,24 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/justinas/alice"
 )
 
 type App struct {
-	Router  *mux.Router
-	pubSub  PubSub
-	service Service
+	Router     *mux.Router
+	Middleware *Middleware
+	pubSub     PubSub
+	service    Service
 }
 
 func (app *App) Init(pubSub PubSub, service Service) {
 	app.Router = mux.NewRouter()
 	app.pubSub = pubSub
 	app.service = service
+	app.Middleware = &Middleware{}
+	m := alice.New(app.Middleware.LoggerMiddleware, app.Middleware.RecoverMiddleware)
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	app.Router.HandleFunc("/push/{device}/{brand}/{event}", app.pushHandler).Methods("POST")
+	app.Router.Handle("/push/{device}/{brand}/{event}", m.ThenFunc(app.pushHandler)).Methods("POST")
 }
 
 func (app *App) Run(addr string) {
