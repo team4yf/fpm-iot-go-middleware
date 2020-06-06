@@ -11,6 +11,7 @@ import (
 )
 
 type App struct {
+	Config     *Config
 	Router     *mux.Router
 	Middleware *Middleware
 	pubSub     PubSub
@@ -28,6 +29,7 @@ func (app *App) Init(pubSub PubSub, service Service) {
 }
 
 func (app *App) Run(addr string) {
+
 	log.Printf("startup %s\n", addr)
 	log.Fatal(http.ListenAndServe(addr, app.Router))
 }

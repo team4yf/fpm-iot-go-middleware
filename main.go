@@ -8,7 +8,8 @@ func main() {
 	pubSub := cfg.GetPubSub()
 	service := cfg.GetService()
 	app := &App{}
+	app.Config = cfg
 	app.Init(pubSub, service)
 
-	app.Run(":9000")
+	app.Run(cfg.GetConfigOrDefault("server.host", "0.0.0.0") + ":" + cfg.GetConfigOrDefault("server.port", "9000"))
 }

@@ -49,6 +49,14 @@ func init() {
 
 type Config struct{}
 
+func (c *Config) GetConfigOrDefault(key string, dft string) string {
+	if viper.IsSet(key) {
+		return viper.GetString(key)
+	}
+	return dft
+
+}
+
 func (c *Config) GetPubSub() PubSub {
 	return NewMQTTPubSub(MQTT_URL, MQTT_USER, MQTT_PASS, (byte)(MQTT_QOS), MQTT_RETAIN)
 }
