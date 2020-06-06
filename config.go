@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 var (
 	PORT              = "3009"
 	REDIS_HOST        = "localhost"
@@ -19,4 +21,8 @@ type Config struct{}
 
 func (c *Config) GetPubSub() PubSub {
 	return NewMQTTPubSub(MQTT_URL, MQTT_USER, MQTT_PASS, (byte)(MQTT_EVENT_QOS), MQTT_EVENT_RETAIN)
+}
+
+func (c *Config) GetService() Service {
+	return NewRedisService(fmt.Sprintf("%s:%s", REDIS_HOST, REDIS_PORT), REDIS_PASS, REDIS_DB)
 }

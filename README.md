@@ -23,5 +23,11 @@ https://github.com/team4yf/fpm-iot-cloud-middleware
 
  `/push/:device/:brand/:event`
 
-
  `$ curl -H "Content-Type: application/json" -XPOST -d '{"data":1}' localhost:9000/push/light/lb/beat`
+
+ 需要使用 jsonPath 来获取数据中的设备 ID
+
+根据设备的ID来获取设备对应的 appid，用来区分不同的应用，该信息保存在 redis 中
+key: `device:type:brand: {deviceId: appid,}`
+ `$push/:appid/event`
+ 

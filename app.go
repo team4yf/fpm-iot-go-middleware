@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,13 +10,15 @@ import (
 )
 
 type App struct {
-	Router *mux.Router
-	pubSub PubSub
+	Router  *mux.Router
+	pubSub  PubSub
+	service Service
 }
 
-func (app *App) Init(pubSub PubSub) {
+func (app *App) Init(pubSub PubSub, service Service) {
 	app.Router = mux.NewRouter()
 	app.pubSub = pubSub
+	app.service = service
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	app.Router.HandleFunc("/push/{device}/{brand}/{event}", app.pushHandler).Methods("POST")
 }
@@ -30,17 +33,30 @@ func (app *App) pushHandler(w http.ResponseWriter, r *http.Request) {
 	device := params["device"]
 	brand := params["brand"]
 	event := params["event"]
-	var body interface{}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		panic(nil)
+	body, err := GetBodyString(r.Body)
+	if err != nil {
+		log.Printf("Error reading body: %v", err)
+		http.Error(w, "can't read body", http.StatusBadRequest)
+		return
 	}
-	defer r.Body.Close()
 	go func() {
-		app.pubSub.Publish("$push/event/dd", body)
+		var deviceID string
+		if res, err := GetJsonPathData(body, "$.data"); err != nil {
+			log.Printf("device id not: %v", err)
+			return
+		} else {
+			deviceID = res.(string)
+		}
+		if uuid, err := app.service.Receive(device, brand, event, deviceID); err != nil {
+			log.Printf("Error reading body: %v", err)
+			return
+		} else {
+			app.pubSub.Publish(fmt.Sprintf("^push/%s/event", uuid), body)
+		}
 	}()
 
 	log.Printf("device: %s brand:%s event:%s body:%s\n", device, brand, event, body)
-	writeJSON(w, 200, `{"errorNo":"ok"`)
+	writeJSON(w, 200, (`{"errorNo":"ok"`))
 }
 
 func writeJSON(w http.ResponseWriter, code int, payload interface{}) {
