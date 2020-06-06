@@ -1,0 +1,35 @@
+{
+    "ssl": {
+        "key": "ssl/privatekey.pem",
+        "cert": "ssl/certificate.pem",
+        "port": 18443
+    },
+    "server": {
+        "host": "0.0.0.0",
+        "port": 9000
+    },
+    "redis": {
+        "host": "localhost",
+        "port": 6379,
+        "db":13,
+        "password": "admin123"
+    },
+    "mqttserver":{
+        "host": "www.ruichen.top",
+        "port": 1883,
+        "username": "admin",
+        "password": "123123123",
+        "qos": 0,
+        "retain": false
+    },
+    "notify": [
+        {
+            "url": "charger/:event",
+            "topic": "$notify/charger",
+            "bodyparser": "json",
+            "param": "event",
+            "header": { "project": "charger" },
+            "response": { "code": 200 }
+        }
+    ]
+}

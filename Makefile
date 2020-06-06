@@ -9,3 +9,9 @@ sub:
 	mosquitto_sub -h www.ruichen.top -t "^push/$(uuid)/event" -u "admin" -P "123123123"
 create-redis-data:
 	hset device:light:lt 321123 d8f7r9fo
+
+docker-build:
+	docker build --tag fpm-iot-middleware:v2.0 .
+
+docker-run:
+	docker run -e "REDIS_HOST=192.168.88.111" -p 9000:9000 fpm-iot-middleware:v2.0
