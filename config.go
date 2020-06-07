@@ -56,6 +56,15 @@ func (c *Config) GetConfigOrDefault(key string, dft string) string {
 	return dft
 
 }
+func (c *Config) IsSet(key string) bool {
+	return viper.IsSet(key)
+}
+func (c *Config) GetMapOrDefault(key string, dft map[string]interface{}) map[string]interface{} {
+	if viper.IsSet(key) {
+		return viper.GetStringMap(key)
+	}
+	return dft
+}
 
 func (c *Config) GetPubSub() PubSub {
 	return NewMQTTPubSub(MQTT_URL, MQTT_USER, MQTT_PASS, (byte)(MQTT_QOS), MQTT_RETAIN)

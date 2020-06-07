@@ -45,9 +45,18 @@ func (app *App) pushHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "can't read body", http.StatusBadRequest)
 		return
 	}
+	deviceSpecificName := device + "-" + brand
+	if !app.Config.IsSet("notify." + deviceSpecificName) {
+		log.Printf("event type: %s not set in config.json", deviceSpecificName)
+		http.Error(w, "unKnown data source", http.StatusBadRequest)
+		return
+	}
+
 	go func() {
 		var deviceID string
-		if res, err := GetJsonPathData(body, "$.data"); err != nil {
+		deviceSpecificName := device + "-" + brand
+		devicePath := app.Config.GetConfigOrDefault("notify."+deviceSpecificName+".devicePath", "$.data")
+		if res, err := GetJsonPathData(body, devicePath); err != nil {
 			log.Printf("device id not: %v", err)
 			return
 		} else {
@@ -57,12 +66,25 @@ func (app *App) pushHandler(w http.ResponseWriter, r *http.Request) {
 			log.Printf("Error reading body: %v", err)
 			return
 		} else {
-			app.pubSub.Publish(fmt.Sprintf("^push/%s/event", uuid), body)
+			wrapper := make(map[string]interface{})
+			bind := app.Config.GetMapOrDefault("notify."+deviceSpecificName+".bind", nil)
+
+			wrapper["payload"] = body
+			wrapper["event"] = event
+			wrapper["uuid"] = uuid
+			wrapper["deviceID"] = deviceID
+			wrapper["device"] = device
+			wrapper["brand"] = brand
+			wrapper["bind"] = bind
+
+			j, _ := json.Marshal(wrapper)
+
+			app.pubSub.Publish(fmt.Sprintf("^push/%s/event", uuid), j)
 		}
 	}()
-
-	log.Printf("device: %s brand:%s event:%s body:%s\n", device, brand, event, body)
-	writeJSON(w, 200, (`{"errorNo":"ok"`))
+	response := app.Config.GetMapOrDefault("notify."+deviceSpecificName+".response", nil)
+	// log.Printf("device: %s brand:%s event:%s body:%s response:%s\n", device, brand, event, body, response)
+	writeJSON(w, 200, response)
 }
 
 func writeJSON(w http.ResponseWriter, code int, payload interface{}) {

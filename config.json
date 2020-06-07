@@ -22,14 +22,24 @@
         "qos": 0,
         "retain": false
     },
-    "notify": [
-        {
-            "url": "charger/:event",
-            "topic": "$notify/charger",
+    "notify": {
+        "light-lt10": {
+            "devicePath": "$.data",
             "bodyparser": "json",
-            "param": "event",
-            "header": { "project": "charger" },
+            "bind": { "extra": "1" },
+            "response": { "code": 200 }
+        },
+        "charger-tld10": {
+            "devicePath": "$.data",
+            "bodyparser": "json",
+            "bind": { "extra": "1" },
+            "response": { "code": 200 }
+        },
+        "ipsound-xx10": {
+            "devicePath": "$.data",
+            "bodyparser": "json",
+            "bind": { "extra": "1" },
             "response": { "code": 200 }
         }
-    ]
+    }
 }
