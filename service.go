@@ -18,6 +18,8 @@ type RedisService struct {
 	cli *redis.Client
 }
 
+// 创建一个新的基于Redis实现的服务
+// 需要传入配置的信息
 func NewRedisService(addr, passwd string, db int) Service {
 	opt := &redis.Options{
 		Addr:     addr,
@@ -34,6 +36,8 @@ func NewRedisService(addr, passwd string, db int) Service {
 	return service
 }
 
+// 处理获取到数据之后的逻辑
+// 主要逻辑就是通过和redis中的数据进行对比，读取保存的信息，返回出设备对应的项目ID
 func (s *RedisService) Receive(deviceType, brand, event, deviceID string) (string, error) {
 	key := fmt.Sprintf("device:%s:%s", deviceType, brand)
 	if val, err := s.cli.HGet(key, deviceID).Result(); err != nil {
