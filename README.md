@@ -31,3 +31,17 @@ https://github.com/team4yf/fpm-iot-cloud-middleware
 key: `device:type:brand: {deviceId: appid,}`
  `$push/:appid/event`
  
+
+### 代码目录说明
+
+- build
+  - docker: 用于打包Docker镜像需要用到的文件
+- conf: 用于开发时运行的docker容器的配置文件
+- internal
+  - model: 数据结构
+  - repository: 持久层交互用到
+  - service: 底层服务，用于聚合一些数据交互
+- pkg: 常用的工具类
+- router: 路由信息
+  - middleware: 中间件
+- scripts: 常用的脚本

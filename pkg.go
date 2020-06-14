@@ -20,7 +20,8 @@ func GetBodyString(readCloser io.ReadCloser) (string, error) {
 
 func GetBodyMap(readCloser io.ReadCloser) (map[string]interface{}, error) {
 	var body map[string]interface{}
-	if err := json.NewDecoder(readCloser).Decode(&body); err != nil {
+	err := json.NewDecoder(readCloser).Decode(&body)
+	if err != nil {
 		return nil, err
 	}
 	defer readCloser.Close()
@@ -31,9 +32,9 @@ func GetBodyMap(readCloser io.ReadCloser) (map[string]interface{}, error) {
 func GetJsonPathData(data, jp string) (interface{}, error) {
 	var jsonData interface{}
 	json.Unmarshal([]byte(data), &jsonData)
-	if res, err := jsonpath.JsonPathLookup(jsonData, jp); err != nil {
+	res, err := jsonpath.JsonPathLookup(jsonData, jp)
+	if err != nil {
 		return nil, err
-	} else {
-		return res, nil
 	}
+	return res, nil
 }
