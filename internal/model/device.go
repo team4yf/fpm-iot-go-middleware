@@ -15,6 +15,8 @@ type Device struct {
 	Status       int       `json:"status"`       // 设备状态
 	ProjectID    int64     `json:"projectId"`    //对应的项目ID
 	AppID        string    `json:"appId"`        //对应的应用ID
+	Type         string    `json:"type"`         // 设备对应的类型 camera, env, light
+	Brand        string    `json:"brand"`        // 设备对应的供应商品牌
 }
 
 // 对应表名

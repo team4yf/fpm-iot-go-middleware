@@ -31,7 +31,7 @@ func (r *deviceRepo) Create(entity *m.Device) error {
 
 func (r *deviceRepo) Get(sn string) (*m.Device, error) {
 	entity := &m.Device{}
-	err := r.db.Where("sn = ?", sn).First(entity).Error
+	err := r.db.Where("sn = ? and status=1 ", sn).First(entity).Error
 	if err != nil {
 		return nil, errors.Wrap(err, "[DeviceRepo] Get error")
 	}

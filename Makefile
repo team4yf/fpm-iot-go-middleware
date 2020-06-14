@@ -22,7 +22,8 @@ beat:
 sub:
 	mosquitto_sub -h www.ruichen.top -t "^push/$(uuid)/event" -u "admin" -P "123123123"
 create-redis-data:
-	hset device:light:lt10 321123 d8f7r9fo
+	hset device:light:lt10:321123 projid 1
+	hset device:light:lt10:321123 uuid d8f7r9fo
 
 docker-build:
 	docker build --tag fpm-iot-middleware:v2.0 .
