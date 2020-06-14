@@ -1,4 +1,4 @@
-package main
+package pkg
 
 // 用于 mqtt pub/sub 的函数
 // 默认使用MQTT的实现,后面会根据情况加入 Kafka 和 Rabbit 的实现

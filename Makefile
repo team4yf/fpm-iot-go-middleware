@@ -10,7 +10,7 @@ install:
 	go mod download
 
 dev:
-	go build -o $(GOBIN)/app ./cmd/main.go && ./$(GOBIN)/app
+	go build -o $(GOBIN)/app ./cmd/main.go && $(GOBIN)/app
 build:
 	CGO_ENABLED=0 GOOS=linux go build -o app
 

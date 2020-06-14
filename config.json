@@ -14,6 +14,14 @@
         "db":13,
         "password": "admin123"
     },
+    "postgresql": {
+        "host": "localhost",
+        "port": 5432,
+        "db":"fim",
+        "password": "Fim741235896",
+        "user": "postgres",
+        "showsql": true
+    },
     "mqttserver":{
         "host": "www.ruichen.top",
         "port": 1883,

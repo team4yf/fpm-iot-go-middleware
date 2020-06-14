@@ -5,12 +5,11 @@ services:
         restart: always
         volumes:
             - ./conf/postgresql/data:/var/lib/postgresql/data
-        environment:
-            POSTGRES_PASSWORD: 741235896
         ports:
             - 5432:5432
         environment:
             TZ: "Asia/Shanghai"
+            POSTGRES_PASSWORD: Fim741235896
         networks:
             - dev-network
     adminer:

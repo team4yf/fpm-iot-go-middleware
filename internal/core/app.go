@@ -1,7 +1,7 @@
 //  核心的结构体
 // 用于响应所有的请求
 // 处理 设备平台推送的数据，进行整合之后，将消息转发给 MQTT
-package main
+package core
 
 import (
 	"encoding/json"
@@ -11,21 +11,27 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
+	"github.com/team4yf/fpm-iot-go-middleware/config"
+	s "github.com/team4yf/fpm-iot-go-middleware/internal/service"
+	"github.com/team4yf/fpm-iot-go-middleware/pkg"
+	"github.com/team4yf/fpm-iot-go-middleware/router/middleware"
 )
 
 type App struct {
-	Config     *Config
-	Router     *mux.Router
-	Middleware *Middleware
-	pubSub     PubSub
-	service    Service
+	Config        *config.Config
+	Router        *mux.Router
+	Middleware    *middleware.Middleware
+	pubSub        pkg.PubSub
+	service       s.Service
+	deviceService s.DeviceService
 }
 
-func (app *App) Init(pubSub PubSub, service Service) {
+func (app *App) Init(pubSub pkg.PubSub, service s.Service, deviceService s.DeviceService) {
 	app.Router = mux.NewRouter()
 	app.pubSub = pubSub
 	app.service = service
-	app.Middleware = &Middleware{}
+	app.deviceService = deviceService
+	app.Middleware = &middleware.Middleware{}
 	m := alice.New(app.Middleware.LoggerMiddleware, app.Middleware.RecoverMiddleware)
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	app.Router.Handle("/push/{device}/{brand}/{event}", m.ThenFunc(app.pushHandler)).Methods("POST")
@@ -42,7 +48,7 @@ func (app *App) pushHandler(w http.ResponseWriter, r *http.Request) {
 	device := params["device"]
 	brand := params["brand"]
 	event := params["event"]
-	body, err := GetBodyString(r.Body)
+	body, err := pkg.GetBodyString(r.Body)
 	if err != nil {
 		log.Printf("Error reading body: %v", err)
 		http.Error(w, "can't read body", http.StatusBadRequest)
@@ -58,8 +64,8 @@ func (app *App) pushHandler(w http.ResponseWriter, r *http.Request) {
 	go func() {
 		var deviceID string
 		deviceSpecificName := device + "-" + brand
-		devicePath := app.Config.GetConfigOrDefault("notify."+deviceSpecificName+".devicePath", "$.data")
-		if res, err := GetJsonPathData(body, devicePath); err != nil {
+		devicePath := app.Config.GetConfigOrDefault("notify."+deviceSpecificName+".devicePath", "$.data").(string)
+		if res, err := pkg.GetJsonPathData(body, devicePath); err != nil {
 			log.Printf("device id not: %v", err)
 			return
 		} else {

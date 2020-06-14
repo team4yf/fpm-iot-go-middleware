@@ -1,17 +1,25 @@
-package main
+package service
 
 import (
 	"errors"
 	"fmt"
 	"log"
 
+	repo "github.com/team4yf/fpm-iot-go-middleware/internal/repository"
+
 	"github.com/go-redis/redis"
+	m "github.com/team4yf/fpm-iot-go-middleware/internal/model"
 )
 
 var DEVICE_NOT_EXISTS = errors.New("not exists device")
 
 type Service interface {
 	Receive(deviceType, brand, event, deviceID string) (string, error)
+}
+
+type DeviceService interface {
+	RegisterDevice(*m.Device) error
+	GetDeviceInfo(string) (*m.Device, error)
 }
 
 type RedisService struct {
@@ -49,4 +57,27 @@ func (s *RedisService) Receive(deviceType, brand, event, deviceID string) (strin
 		return val, nil
 	}
 
+}
+
+type SimpleDeviceService struct {
+	applicationRepo repo.ApplictionRepo
+	deviceRepo      repo.DeviceRepo
+	projectRepo     repo.ProjectRepo
+	clientRepo      repo.ClientRepo
+}
+
+func NewSimpleDeviceService() DeviceService {
+	service := &SimpleDeviceService{
+		applicationRepo: repo.NewApplictionRepo(),
+		deviceRepo:      repo.NewDeviceRepo(),
+		projectRepo:     repo.NewProjectRepo(),
+		clientRepo:      repo.NewClientRepo(),
+	}
+	return service
+}
+func (s *SimpleDeviceService) RegisterDevice(device *m.Device) (err error) {
+	return nil
+}
+func (s *SimpleDeviceService) GetDeviceInfo(sn string) (*m.Device, error) {
+	return nil, nil
 }
