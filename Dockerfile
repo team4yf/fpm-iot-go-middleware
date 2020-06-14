@@ -26,7 +26,7 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN go build -o app .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build  -ldflags="-s -w" -o /app/bin/app /app/cmd/main.go
 
 
 FROM alpine:latest
@@ -35,11 +35,11 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
   echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
   apk --no-cache add ca-certificates
 
-WORKDIR /
+WORKDIR /bin
 
-COPY --from=builder /app/app /
+COPY --from=builder /app/bin/app /bin/
 # Copy the Pre-built binary file from the previous stage
 
 # Command to run the executable
-ENTRYPOINT ["/app"]
+ENTRYPOINT ["/bin/app"]
 CMD []
