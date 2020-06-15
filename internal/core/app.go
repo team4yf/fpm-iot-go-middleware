@@ -54,6 +54,8 @@ func (app *App) pushHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "can't read body", http.StatusBadRequest)
 		return
 	}
+	// 记录下获取到的数据，用来进行日志查询
+	log.Printf("Receive: %s, body: %s\n", r.URL, body)
 	// 获取设备的类型+品牌，从配置文件中获取对应的参数信息
 	deviceSpecificName := device + "-" + brand
 	if !app.Config.IsSet("notify." + deviceSpecificName) {
@@ -64,34 +66,37 @@ func (app *App) pushHandler(w http.ResponseWriter, r *http.Request) {
 
 	// 开启一个新的 goroutine 来获取设备对应的应用id，并发送到 mqtt 消息服务器上
 	go func() {
-		var deviceID string
+		// 从配置文件中获取到设备平台推送的消息体中的 设备ID 的JsonPath
 		devicePath := app.Config.GetConfigOrDefault("notify."+deviceSpecificName+".devicePath", "$.data").(string)
-		if res, err := pkg.GetJsonPathData(body, devicePath); err != nil {
+		res, err := pkg.GetJsonPathData(body, devicePath)
+		if err != nil {
 			log.Printf("device id not: %v", err)
 			return
-		} else {
-			deviceID = res.(string)
 		}
-		if uuid, projid, err := app.service.Receive(device, brand, event, deviceID); err != nil {
-			log.Printf("Error reading body: %v", err)
+		deviceID := res.(string)
+		// 通过设备和id获取到具体对应的项目信息，如果设备不存在或者设备状态不对的话，会抛出异常信息
+		uuid, projid, err := app.service.Receive(device, brand, event, deviceID)
+		if err != nil {
+			log.Printf("Device Not Exists Or Not Actived: %v", err)
 			return
-		} else {
-			wrapper := make(map[string]interface{})
-			bind := app.Config.GetMapOrDefault("notify."+deviceSpecificName+".bind", nil)
-
-			wrapper["payload"] = body
-			wrapper["event"] = event
-			wrapper["uuid"] = uuid
-			wrapper["projid"] = projid
-			wrapper["deviceID"] = deviceID
-			wrapper["device"] = device
-			wrapper["brand"] = brand
-			wrapper["bind"] = bind
-
-			j, _ := json.Marshal(wrapper)
-
-			app.pubSub.Publish(fmt.Sprintf("^push/%s/event", uuid), j)
 		}
+		wrapper := make(map[string]interface{})
+		// 添加固定的静态数据，用于应用平台使用
+		bind := app.Config.GetMapOrDefault("notify."+deviceSpecificName+".bind", nil)
+
+		wrapper["origin"] = body // 源消息体
+		wrapper["event"] = event // 设备事件
+		wrapper["aid"] = uuid    // 设备对应的应用服务平台id
+		wrapper["pid"] = projid  // 设备对应的在服务中的项目id
+		wrapper["sn"] = deviceID // 设备的编码
+		wrapper["type"] = device // 设备对应的类型
+		wrapper["brand"] = brand // 设备对应的品牌
+		wrapper["bind"] = bind   // 设备绑定的静态数据
+
+		j, _ := json.Marshal(wrapper)
+
+		app.pubSub.Publish(fmt.Sprintf("^push/%s/event", uuid), j)
+
 	}()
 	// 响应配置文件中的内容
 	response := app.Config.GetMapOrDefault("notify."+deviceSpecificName+".response", nil)

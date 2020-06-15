@@ -13,12 +13,12 @@ dev:
 	go build -o $(GOBIN)/app ./cmd/main.go && $(GOBIN)/app
 
 build:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(GOBIN)/app ./cmd/main.go && $(GOBIN)/app
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(GOBIN)/app ./cmd/main.go
 
 build-prod:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -tags prod -o $(GOBIN)/app ./cmd/main.go
-	
-beat: 
+
+beat:
 	curl -H "Content-Type: application/json" -XPOST -d '{"data":"321123"}' localhost:9000/push/light/lt10/beat
 
 sub:

@@ -10,6 +10,7 @@ https://github.com/team4yf/fpm-iot-cloud-middleware
 - 实现 TCP 服务,监听 5001 端口,接受和发送 HEX 数据
 - 接入MQTT服务端,用于PUB/SUB设备数据
 - 接入Kafka服务器,用于PUB/SUB业务或者日志数据
+- 提供一个websocket服务，用于转发消息内容
 
 
 核心目标:
@@ -29,8 +30,20 @@ https://github.com/team4yf/fpm-iot-cloud-middleware
 
 根据设备的ID来获取设备对应的 appid，用来区分不同的应用，该信息保存在 redis 中
 key: `device:type:brand: {deviceId: appid,}`
- `$push/:appid/event`
+ `^push/:appid/event`
  
+JSON数据格式
+
+| 名称 | 描述 | 数据类型 |
+| --- | ----- | --- |
+| origin | 源消息体 | Object |
+| event | 设备事件 | String |
+| aid | 设备对应的应用服务平台id | String |
+| pid | 设备对应的在服务中的项目id | String |
+| sn | 设备的编码 | String |
+| type | 设备对应的类型 | String |
+| brand | 设备对应的品牌 | String |
+| bind | 设备绑定的静态数据 | Object |
 
 ### 代码目录说明
 
