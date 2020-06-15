@@ -19,7 +19,7 @@
         "port": 5432,
         "db":"fim",
         "password": "Fim741235896",
-        "user": "postgres",
+        "user": "fpm",
         "showsql": true
     },
     "mqttserver":{

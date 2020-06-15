@@ -2,14 +2,17 @@ version: '3'
 services:
     db:
         image: postgres:13-alpine
+        container_name: pgserver
         restart: always
         volumes:
             - ./conf/postgresql/data:/var/lib/postgresql/data
+            - ./conf/postgresql/initdb.sql:/docker-entrypoint-initdb.d/initdb.sql
         ports:
             - 5432:5432
         environment:
             TZ: "Asia/Shanghai"
             POSTGRES_PASSWORD: Fim741235896
+            POSTGRES_DB: fim
         networks:
             - dev-network
     adminer:
