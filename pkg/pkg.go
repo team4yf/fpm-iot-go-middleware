@@ -2,11 +2,22 @@ package pkg
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 
 	"github.com/oliveagle/jsonpath"
 )
+
+func GetBodyByte(readCloser io.ReadCloser) ([]byte, error) {
+	body, err := ioutil.ReadAll(readCloser)
+	if err != nil {
+		return nil, err
+	}
+	defer readCloser.Close()
+
+	return body, nil
+}
 
 func GetBodyString(readCloser io.ReadCloser) (string, error) {
 	body, err := ioutil.ReadAll(readCloser)
@@ -27,6 +38,20 @@ func GetBodyMap(readCloser io.ReadCloser) (map[string]interface{}, error) {
 	defer readCloser.Close()
 
 	return body, nil
+}
+
+func GetBodyStruct(readCloser io.ReadCloser, obj interface{}) error {
+	body, err := ioutil.ReadAll(readCloser)
+	if err != nil {
+		return err
+	}
+	defer readCloser.Close()
+
+	if err := json.Unmarshal(body, &obj); err != nil {
+		return err
+	}
+	fmt.Printf("from pkg:%v", obj)
+	return nil
 }
 
 func GetJsonPathData(data, jp string) (interface{}, error) {

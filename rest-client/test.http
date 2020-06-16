@@ -1,16 +1,21 @@
 @host = http://localhost:9000
 @sn = ff123123
 @device = light
-@brand = lg01
+@brand = lt10
 @pid = 1
 @appid = a0001
 
-### 注册一个设备
-POST {{host}}//device/{{device}}/{{brand}}/create
+ ### 发送一个心跳包
+POST {{host}}/push/{{device}}/{{brand}}/beat
 Content-Type: application/json
 
 {
-    "sn": "{{sn}}",
-    "projectId": "{{pid}}",
-    "appId": "{{appid}}",
+    "data": "{{sn}}"
  }
+
+
+### 注册一个设备
+POST {{host}}/device/{{device}}/{{brand}}/create
+Content-Type: application/json
+
+{"sn": "{{sn}}","projectId": {{pid}},"appId": "{{appid}}"}
