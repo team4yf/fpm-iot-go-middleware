@@ -48,10 +48,10 @@ func NewSimpleDeviceService(addr, passwd string, db int) DeviceService {
 	return service
 }
 func (s *SimpleDeviceService) RegisterDevice(device *m.Device) (err error) {
-	return nil
+	return s.deviceRepo.Create(device)
 }
 func (s *SimpleDeviceService) GetDeviceInfo(sn string) (*m.Device, error) {
-	return nil, nil
+	return s.deviceRepo.Get(sn)
 }
 
 // 处理获取到数据之后的逻辑

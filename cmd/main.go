@@ -7,6 +7,7 @@ import (
 	"github.com/team4yf/fpm-iot-go-middleware/internal/core"
 	s "github.com/team4yf/fpm-iot-go-middleware/internal/service"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg"
+	"github.com/team4yf/fpm-iot-go-middleware/router"
 )
 
 func init() {
@@ -21,7 +22,7 @@ func main() {
 	app := &core.App{}
 	app.Config = cfg
 	app.Init(pubSub, service)
-
+	router.Load(app)
 	app.Run(fmt.Sprintf("%v:%v",
 		cfg.GetConfigOrDefault("server.host", "0.0.0.0"), cfg.GetConfigOrDefault("server.port", "9000")))
 }
