@@ -26,7 +26,7 @@ var (
 
 func init() {
 	viper.SetDefault("redis", map[string]interface{}{"host": "localhost", "port": 6379, "db": 0, "password": "admin123"})
-	viper.SetDefault("mqtt", map[string]interface{}{"url": "www.ruichen.top:1883", "user": "admin", "qos": 0, "retain": false, "pass": "123123123"})
+	viper.SetDefault("mqtt", map[string]interface{}{"url": "mqtt.yunplus.io:1883", "user": "admin", "qos": 0, "retain": false, "pass": "123123123"})
 	viper.SetDefault("postgresql", map[string]interface{}{"host": "localhost", "port": 5432, "db": "fim", "user": "postgres", "password": "Fim741235896", "showsql": true})
 	viper.SetConfigType("json")
 	viper.AddConfigPath(".") // 设置配置文件和可执行二进制文件在用一个目录

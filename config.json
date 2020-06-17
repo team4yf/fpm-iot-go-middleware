@@ -23,7 +23,7 @@
         "showsql": true
     },
     "mqttserver":{
-        "host": "www.ruichen.top",
+        "host": "mqtt.yunplus.io",
         "port": 1883,
         "username": "admin",
         "password": "123123123",

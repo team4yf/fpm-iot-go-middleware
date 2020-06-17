@@ -1,12 +1,13 @@
 @host = http://localhost:9000
+@remote = http://open.yunplus.io:19580
 @sn = ff123123
 @device = light
 @brand = lt10
 @pid = 1
-@appid = a0001
+@appid = ceaa191a
 
  ### 发送一个心跳包
-POST {{host}}/push/{{device}}/{{brand}}/beat
+POST {{remote}}/push/{{device}}/{{brand}}/beat
 Content-Type: application/json
 
 {
