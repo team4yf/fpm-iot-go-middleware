@@ -74,7 +74,7 @@ func Load(app *core.App) {
 
 			j, _ := json.Marshal(wrapper)
 
-			app.PubSub.Publish(fmt.Sprintf("^push/%s/event", uuid), j)
+			app.PubSub.Publish(fmt.Sprintf("$d2s/%s/partner/push", uuid), j)
 
 		}()
 		// 响应配置文件中的内容
