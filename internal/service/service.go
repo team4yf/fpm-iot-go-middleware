@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"log"
@@ -8,11 +9,13 @@ import (
 
 	repo "github.com/team4yf/fpm-iot-go-middleware/internal/repository"
 
-	"github.com/go-redis/redis"
+	"github.com/go-redis/redis/v8"
 	m "github.com/team4yf/fpm-iot-go-middleware/internal/model"
 )
 
 var DEVICE_NOT_EXISTS = errors.New("not exists device")
+
+var Ctx = context.Background()
 
 type DeviceService interface {
 	RegisterDevice(*m.Device) error
@@ -41,7 +44,7 @@ func NewSimpleDeviceService(addr, passwd string, db int) DeviceService {
 		projectRepo:     repo.NewProjectRepo(),
 		clientRepo:      repo.NewClientRepo(),
 	}
-	_, err := service.cli.Ping().Result()
+	_, err := service.cli.Ping(Ctx).Result()
 	if err != nil {
 		log.Fatal("redis cant connect ", err)
 	}
@@ -58,7 +61,7 @@ func (s *SimpleDeviceService) GetDeviceInfo(sn string) (*m.Device, error) {
 // 主要逻辑就是通过和redis中的数据进行对比，读取保存的信息，返回出设备对应的项目ID
 func (s *SimpleDeviceService) Receive(deviceType, brand, event, deviceID string) (string, int64, error) {
 	key := fmt.Sprintf("device:%s:%s:%s", deviceType, brand, deviceID)
-	data, err := s.cli.HGetAll(key).Result()
+	data, err := s.cli.HGetAll(Ctx, key).Result()
 
 	if err != nil {
 		return "", -1, err
@@ -73,8 +76,8 @@ func (s *SimpleDeviceService) Receive(deviceType, brand, event, deviceID string)
 			return "", -1, DEVICE_NOT_EXISTS
 		}
 		// 缓存到redis中
-		s.cli.HSet(key, "appid", device.AppID)
-		s.cli.HSet(key, "projid", device.ProjectID)
+		s.cli.HSet(Ctx, key, "appid", device.AppID)
+		s.cli.HSet(Ctx, key, "projid", device.ProjectID)
 		return device.AppID, device.ProjectID, nil
 	}
 
