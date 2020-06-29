@@ -1,6 +1,6 @@
 @host = http://localhost:9000
 @remote = http://open.yunplus.io:19580
-@sn = ff123123
+@sn = 866971039105809
 @device = light
 @brand = lt10
 @pid = 1
