@@ -10,13 +10,10 @@
 POST {{remote}}/push/{{device}}/{{brand}}/beat
 Content-Type: application/json
 
-{
-    "data": "{{sn}}"
- }
-
+{"lightingStatus":"1","recordtime":"2020-06-29 17:41:14","brightness":"20","imei":"{{sn}}","electricity":"45.5","voltage":"235.7"}
 
 ### 注册一个设备
-POST {{host}}/device/{{device}}/{{brand}}/create
+POST {{remote}}/device/{{device}}/{{brand}}/create
 Content-Type: application/json
 
 {"sn": "{{sn}}","projectId": {{pid}},"appId": "{{appid}}"}
