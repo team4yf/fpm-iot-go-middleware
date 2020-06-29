@@ -1,0 +1,94 @@
+### 瓴泰科技智慧路灯 API 接口
+
+@appkey=LT0314fbf27a4d2986
+@appsec=1bc7b874c74623298a6
+@imei=866971039105809
+
+@baseUrl=http://101.132.142.5:8088/api
+
+@token=eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1OTQ3Mjk3MzcsInVzZXJJZCI6Mjk4LCJpYXQiOjE1OTM0MzM3MzcsImp0aSI6IkxUMDMxNGZiZjI3YTRkMjk4NiJ9.-wyFSxB-njX6ZdtsZ3zXxk6CvpMQf9FN6UbpfO7DO5E
+### /auth/getAccessToken
+GET {{baseUrl}}/auth/getAccessToken
+Content-Type: application/json
+appId: {{appkey}}
+
+
+### /lightControl/command, 支持批量操作
+POST {{baseUrl}}/lightControl/command
+accessToken: {{token}}
+Content-Type: application/json
+
+[{
+  "circuit":1,
+  "imei":"{{imei}}",
+  "commandType":"BRIGHTNESS",
+  "commandValue": 20,
+  "type": 2
+}]
+
+### /lightControl/setLocalStrategy
+POST {{baseUrl}}/lightControl/setLocalStrategy
+accessToken: {{token}}
+Content-Type: application/json
+
+{
+  "commandList": [
+    {
+      "commandType": "ON",
+      "time": "15:00"
+    },{
+      "commandType": "BRIGHTNESS",
+      "commandValue": 90,
+      "time": "17:00"
+    }
+  ],
+  "imeiList": [
+    {
+      "imei": "{{imei}}"
+    }
+  ]
+}
+
+### /lightControl/batchUpdateFrequency, frequency单位是s
+POST {{baseUrl}}/lightControl/batchUpdateFrequency
+accessToken: {{token}}
+Content-Type: application/json
+
+{
+  "frequency": 120,
+  "imeiList": [
+    "{{imei}}"
+  ],
+  "type": 2
+}
+
+### /lightControl/setEarlyWarn 设置预警
+POST {{baseUrl}}/lightControl/setEarlyWarn
+accessToken: {{token}}
+Content-Type: application/json
+
+{
+  "circuit": 1,
+  "imei": "{{imei}}",
+  "maxElectricity": 10,
+  "maxPower": 20,
+  "maxVoltage": 80,
+  "minElectricity": 40,
+  "minPower": 50,
+  "minVoltage": 60
+}
+
+### /lightControl/cancelEarlyWarn
+POST {{baseUrl}}/lightControl/cancelEarlyWarn
+accessToken: {{token}}
+Content-Type: application/json
+
+{
+  "circuit": 1,
+  "imei": "{{imei}}"
+}
+
+### /lightControl/list
+GET {{baseUrl}}/lightControl/list?imei={{imei}}&type=2&current=1&size=100
+Content-Type: application/json
+accessToken: {{token}}
