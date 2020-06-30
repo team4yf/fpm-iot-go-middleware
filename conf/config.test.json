@@ -1,0 +1,34 @@
+{
+    "mode": "debug",
+    "addr": ":9090",
+    "name": "fpm-go-middleware",
+    "log":{
+        "writers": "file,stdout",
+        "level": "DEBUG",
+        "logger_file": "./logs/app.log",
+        "logger_warn_file": "./logs/app.wf.log",
+        "logger_error_file": "./logs/app.err.log",
+        "log_format_text":true,
+        "rollingPolicy": "daily",
+        "log_rotate_date": 1,
+        "log_rotate_size": 1,
+        "log_backup_count": 7
+    },
+    "db": {
+        "engine": "postgres",
+        "user": "devuser",
+        "password": "DevPass123",
+        "host": "localhost",
+        "port": 15432,
+        "database": "devdb",
+        "charset": "utf8",
+        "showSql": true
+    },
+    "redis": {
+        "addr":"localhost:16379",
+        "passwd":"admin123",
+        "db": 1,
+        "pool": 10
+    }
+
+}

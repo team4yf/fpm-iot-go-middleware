@@ -1,10 +1,37 @@
 package config
 
 import (
-	"log"
+	"fmt"
+	"strings"
 
+	"github.com/go-redis/redis/v8"
+	"github.com/pkg/errors"
 	"github.com/spf13/viper"
+	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
 )
+
+var (
+	//Db the db config
+	Db          DBSetting
+	RedisConfig *redis.Options
+)
+
+// Config 读取配置
+type Config struct {
+	Name string
+}
+
+//DBSetting the config about the db
+type DBSetting struct {
+	Engine   string
+	User     string
+	Password string
+	Host     string
+	Port     int
+	Database string
+	Charset  string
+	ShowSQL  bool
+}
 
 var (
 	REDIS_HOST  string
@@ -60,8 +87,6 @@ func init() {
 	log.Println(REDIS_HOST, REDIS_PORT, REDIS_DB, REDIS_PASS, MQTT_URL, MQTT_USER, MQTT_PASS, MQTT_QOS, MQTT_RETAIN)
 }
 
-type Config struct{}
-
 func (c *Config) GetConfigOrDefault(key string, dft interface{}) interface{} {
 	if viper.IsSet(key) {
 		return viper.Get(key)
@@ -77,4 +102,81 @@ func (c *Config) GetMapOrDefault(key string, dft map[string]interface{}) map[str
 		return viper.GetStringMap(key)
 	}
 	return dft
+}
+
+// Init 初始化配置，默认读取config.local.yaml
+func Init(cfg string) error {
+	c := Config{
+		Name: cfg,
+	}
+
+	// 初始化配置文件
+	if err := c.initConfig(); err != nil {
+		return err
+	}
+	// 初始化日志包
+	c.initLog()
+	return nil
+}
+
+func (cfg *Config) initConfig() error {
+	viper.AutomaticEnv()     // 读取匹配的环境变量
+	viper.SetEnvPrefix("BS") // 读取环境变量的前缀为 BS
+	replacer := strings.NewReplacer(".", "_")
+	viper.SetEnvKeyReplacer(replacer)
+	deployMode := viper.GetString("deploy.mode")
+	if deployMode == "" {
+		deployMode = "local"
+	}
+	deployMode = strings.ToLower(deployMode)
+	//read config file by BS_DEPLOY_MODE=PROD
+	fmt.Println("DEPLOY_MODE:" + viper.GetString("deploy.mode"))
+	if cfg.Name != "" {
+		viper.SetConfigFile(cfg.Name) // 如果指定了配置文件，则解析指定的配置文件
+	} else {
+		viper.AddConfigPath("conf") // 如果没有指定配置文件，则解析默认的配置文件
+		viper.SetConfigName("config." + deployMode)
+	}
+	viper.SetConfigType("json") // 设置配置文件格式为json
+
+	if err := viper.ReadInConfig(); err != nil { // viper解析配置文件
+		return errors.WithStack(err)
+	}
+
+	Db = DBSetting{
+		Engine:   viper.GetString("db.engine"),
+		User:     viper.GetString("db.user"),
+		Password: viper.GetString("db.password"),
+		Host:     viper.GetString("db.host"),
+		Port:     viper.GetInt("db.port"),
+		Database: viper.GetString("db.database"),
+		Charset:  viper.GetString("db.charset"),
+		ShowSQL:  viper.GetBool("db.showSql"),
+	}
+	RedisConfig = &redis.Options{
+		Addr:     viper.GetString("redis.addr"),
+		Password: viper.GetString("redis.passwd"),
+		DB:       viper.GetInt("redis.db"),
+		PoolSize: viper.GetInt("redis.pool"),
+	}
+	return nil
+}
+
+func (cfg *Config) initLog() {
+	config := log.Config{
+		Writers:         viper.GetString("log.writers"),
+		LoggerLevel:     viper.GetString("log.level"),
+		LoggerFile:      viper.GetString("log.logger_file"),
+		LoggerWarnFile:  viper.GetString("log.logger_warn_file"),
+		LoggerErrorFile: viper.GetString("log.logger_error_file"),
+		LogFormatText:   viper.GetBool("log.log_format_text"),
+		RollingPolicy:   viper.GetString("log.rollingPolicy"),
+		LogRotateDate:   viper.GetInt("log.log_rotate_date"),
+		LogRotateSize:   viper.GetInt("log.log_rotate_size"),
+		LogBackupCount:  viper.GetInt("log.log_backup_count"),
+	}
+	err := log.NewLogger(&config, log.InstanceZapLogger)
+	if err != nil {
+		fmt.Printf("InitWithConfig err: %v", err)
+	}
 }
