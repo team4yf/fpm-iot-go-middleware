@@ -5,8 +5,10 @@ import (
 
 	config "github.com/team4yf/fpm-iot-go-middleware/config"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/core"
+	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
 	s "github.com/team4yf/fpm-iot-go-middleware/internal/service"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg"
+	"github.com/team4yf/fpm-iot-go-middleware/pkg/pool"
 	"github.com/team4yf/fpm-iot-go-middleware/router"
 )
 
@@ -14,12 +16,22 @@ func init() {
 
 }
 
+var migration model.Migration
+
 func main() {
-	cfg := &config.Config{}
+	config.Init("")
+	// Init the model
+	model.CreateDb()
+	migration.Install()
+
+	// Init the redis pool
+	pool.Init(config.RedisConfig)
 
 	pubSub := GetPubSub()
 	service := GetService()
 	app := &core.App{}
+
+	cfg := &config.Config{}
 	app.Config = cfg
 	app.Init(pubSub, service)
 	router.Load(app)
@@ -32,5 +44,5 @@ func GetPubSub() pkg.PubSub {
 }
 
 func GetService() s.DeviceService {
-	return s.NewSimpleDeviceService(fmt.Sprintf("%s:%s", config.REDIS_HOST, config.REDIS_PORT), config.REDIS_PASS, config.REDIS_DB)
+	return s.NewSimpleDeviceService()
 }

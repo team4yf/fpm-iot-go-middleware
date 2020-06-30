@@ -1,4 +1,49 @@
 {
+    "ssl": {
+        "key": "ssl/privatekey.pem",
+        "cert": "ssl/certificate.pem",
+        "port": 18443
+    },
+    "server": {
+        "host": "0.0.0.0",
+        "port": 9000
+    },
+    "postgresql": {
+        "host": "localhost",
+        "port": 5432,
+        "db":"fim",
+        "password": "Fim741235896",
+        "user": "fpm",
+        "showsql": true
+    },
+    "mqttserver":{
+        "host": "mqtt.yunplus.io",
+        "port": 1883,
+        "username": "admin",
+        "password": "123123123",
+        "qos": 0,
+        "retain": false
+    },
+    "notify": {
+        "light-lt10": {
+            "devicePath": "$.data",
+            "bodyparser": "json",
+            "bind": { "extra": "1" },
+            "response": { "code": 200 }
+        },
+        "charger-tld10": {
+            "devicePath": "$.data",
+            "bodyparser": "json",
+            "bind": { "extra": "1" },
+            "response": { "code": 200 }
+        },
+        "ipsound-xx10": {
+            "devicePath": "$.data",
+            "bodyparser": "json",
+            "bind": { "extra": "1" },
+            "response": { "code": 200 }
+        }
+    },
     "mode": "debug",
     "addr": ":9090",
     "name": "fpm-go-middleware",
@@ -16,11 +61,11 @@
     },
     "db": {
         "engine": "postgres",
-        "user": "devuser",
-        "password": "DevPass123",
+        "user": "fpm",
+        "password": "Fim741235896",
         "host": "localhost",
         "port": 25432,
-        "database": "devdb",
+        "database": "fim",
         "charset": "utf8",
         "showSql": true
     },

@@ -16,7 +16,7 @@ type applictionRepo struct {
 
 func NewApplictionRepo() ApplictionRepo {
 	return &applictionRepo{
-		db: m.Conn,
+		db: m.Db,
 	}
 }
 

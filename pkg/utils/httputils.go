@@ -2,16 +2,32 @@ package utils
 
 import (
 	"bytes"
-	"fmt"
+	"encoding/json"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 type ResponseWrapper struct {
 	StatusCode int
-	Body       string
+	Success    bool
+	Err        error
+	Body       []byte
 	Header     http.Header
+}
+
+//Convert the body to another struct
+func (rsp *ResponseWrapper) ConvertBody(data interface{}) (err error) {
+	if json.Unmarshal(rsp.Body, data); err != nil {
+		return
+	}
+	return
+}
+func (rsp *ResponseWrapper) GetStringBody() string {
+
+	return (string)(rsp.Body)
 }
 
 func Get(url string, timeout int) ResponseWrapper {
@@ -45,8 +61,8 @@ func PostParams(url string, params string, timeout int) ResponseWrapper {
 	return request(req, timeout)
 }
 
-func PostJson(url string, body string, timeout int) ResponseWrapper {
-	buf := bytes.NewBufferString(body)
+func PostJson(url string, body []byte, timeout int) ResponseWrapper {
+	buf := bytes.NewBuffer(body)
 	req, err := http.NewRequest("POST", url, buf)
 	if err != nil {
 		return createRequestError(err)
@@ -56,8 +72,8 @@ func PostJson(url string, body string, timeout int) ResponseWrapper {
 	return request(req, timeout)
 }
 
-func PostJsonWithHeader(url string, header map[string]string, body string, timeout int) ResponseWrapper {
-	buf := bytes.NewBufferString(body)
+func PostJsonWithHeader(url string, header map[string]string, body []byte, timeout int) ResponseWrapper {
+	buf := bytes.NewBuffer(body)
 	req, err := http.NewRequest("POST", url, buf)
 	if err != nil {
 		return createRequestError(err)
@@ -71,7 +87,7 @@ func PostJsonWithHeader(url string, header map[string]string, body string, timeo
 }
 
 func request(req *http.Request, timeout int) ResponseWrapper {
-	wrapper := ResponseWrapper{StatusCode: 0, Body: "", Header: make(http.Header)}
+	wrapper := ResponseWrapper{StatusCode: 0, Success: false}
 	client := &http.Client{}
 	if timeout > 0 {
 		client.Timeout = time.Duration(timeout) * time.Second
@@ -79,27 +95,30 @@ func request(req *http.Request, timeout int) ResponseWrapper {
 	setRequestHeader(req)
 	resp, err := client.Do(req)
 	if err != nil {
-		wrapper.Body = fmt.Sprintf("执行HTTP请求错误-%s", err.Error())
+		wrapper.Err = errors.Wrap(err, "执行HTTP请求错误")
 		return wrapper
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		wrapper.Body = fmt.Sprintf("读取HTTP请求返回值失败-%s", err.Error())
+		wrapper.Err = errors.Wrap(err, "读取HTTP请求返回值失败")
 		return wrapper
 	}
 	wrapper.StatusCode = resp.StatusCode
-	wrapper.Body = string(body)
+	if resp.StatusCode >= 200 && resp.StatusCode < 400 {
+		wrapper.Success = true
+	}
+	wrapper.Body = body
 	wrapper.Header = resp.Header
 
 	return wrapper
 }
 
 func setRequestHeader(req *http.Request) {
-	req.Header.Set("User-Agent", "golang/gocron")
+	req.Header.Set("User-Agent", "fpm-iot-go-middleware")
 }
 
 func createRequestError(err error) ResponseWrapper {
-	errorMessage := fmt.Sprintf("创建HTTP请求错误-%s", err.Error())
-	return ResponseWrapper{0, errorMessage, make(http.Header)}
+	errorMessage := errors.Wrap(err, "创建HTTP请求错误")
+	return ResponseWrapper{StatusCode: 0, Success: false, Err: errorMessage}
 }

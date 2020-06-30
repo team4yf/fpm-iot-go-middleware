@@ -16,7 +16,7 @@ type projectRepo struct {
 
 func NewProjectRepo() ProjectRepo {
 	return &projectRepo{
-		db: m.Conn,
+		db: m.Db,
 	}
 }
 

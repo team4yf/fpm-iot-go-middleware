@@ -16,7 +16,7 @@ type clientRepo struct {
 
 func NewClientRepo() ClientRepo {
 	return &clientRepo{
-		db: m.Conn,
+		db: m.Db,
 	}
 }
 

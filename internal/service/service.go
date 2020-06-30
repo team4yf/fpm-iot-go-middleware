@@ -4,10 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"strconv"
 
 	repo "github.com/team4yf/fpm-iot-go-middleware/internal/repository"
+	"github.com/team4yf/fpm-iot-go-middleware/pkg/pool"
 
 	"github.com/go-redis/redis/v8"
 	m "github.com/team4yf/fpm-iot-go-middleware/internal/model"
@@ -31,22 +31,14 @@ type SimpleDeviceService struct {
 	clientRepo      repo.ClientRepo
 }
 
-func NewSimpleDeviceService(addr, passwd string, db int) DeviceService {
-	opt := &redis.Options{
-		Addr:     addr,
-		Password: passwd,
-		DB:       db,
-	}
+func NewSimpleDeviceService() DeviceService {
+
 	service := &SimpleDeviceService{
-		cli:             redis.NewClient(opt),
+		cli:             pool.Get(),
 		applicationRepo: repo.NewApplictionRepo(),
 		deviceRepo:      repo.NewDeviceRepo(),
 		projectRepo:     repo.NewProjectRepo(),
 		clientRepo:      repo.NewClientRepo(),
-	}
-	_, err := service.cli.Ping(Ctx).Result()
-	if err != nil {
-		log.Fatal("redis cant connect ", err)
 	}
 	return service
 }

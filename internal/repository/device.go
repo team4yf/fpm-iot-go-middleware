@@ -16,7 +16,7 @@ type deviceRepo struct {
 
 func NewDeviceRepo() DeviceRepo {
 	return &deviceRepo{
-		db: m.Conn,
+		db: m.Db,
 	}
 }
 

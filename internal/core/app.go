@@ -5,7 +5,6 @@ package core
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -13,6 +12,7 @@ import (
 	"github.com/team4yf/fpm-iot-go-middleware/config"
 	s "github.com/team4yf/fpm-iot-go-middleware/internal/service"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg"
+	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
 	"github.com/team4yf/fpm-iot-go-middleware/router/middleware"
 )
 
@@ -31,12 +31,12 @@ func (app *App) Init(pubSub pkg.PubSub, service s.DeviceService) {
 	app.Service = service
 	app.Middleware = &middleware.Middleware{}
 	app.m = alice.New(app.Middleware.LoggerMiddleware, app.Middleware.RecoverMiddleware)
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+
 }
 
 func (app *App) Run(addr string) {
 
-	log.Printf("startup %s\n", addr)
+	log.Infof("startup %s\n", addr)
 	log.Fatal(http.ListenAndServe(addr, app.Router))
 }
 

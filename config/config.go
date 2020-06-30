@@ -51,7 +51,7 @@ var (
 	PG_SHOWSQL  bool
 )
 
-func init() {
+func loadConfig() {
 	viper.SetDefault("redis", map[string]interface{}{"host": "localhost", "port": 6379, "db": 0, "password": "admin123"})
 	viper.SetDefault("mqtt", map[string]interface{}{"url": "mqtt.yunplus.io:1883", "user": "admin", "qos": 0, "retain": false, "pass": "123123123"})
 	viper.SetDefault("postgresql", map[string]interface{}{"host": "localhost", "port": 5432, "db": "fim", "user": "postgres", "password": "Fim741235896", "showsql": true})
@@ -60,10 +60,10 @@ func init() {
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
 			// Config file not found; ignore error if desired
-			log.Println("no such config file")
+			log.Info("no such config file")
 		} else {
 			// Config file was found but another error was produced
-			log.Println("read config error")
+			log.Info("read config error")
 		}
 		log.Fatal(err) // 读取配置文件失败致命错误
 	}
@@ -84,7 +84,7 @@ func init() {
 	MQTT_PASS = viper.GetString("mqtt.pass")
 	MQTT_QOS = viper.GetInt("mqtt.qos")
 	MQTT_RETAIN = viper.GetBool("mqtt.retain")
-	log.Println(REDIS_HOST, REDIS_PORT, REDIS_DB, REDIS_PASS, MQTT_URL, MQTT_USER, MQTT_PASS, MQTT_QOS, MQTT_RETAIN)
+	log.Debug(REDIS_HOST, REDIS_PORT, REDIS_DB, REDIS_PASS, MQTT_URL, MQTT_USER, MQTT_PASS, MQTT_QOS, MQTT_RETAIN)
 }
 
 func (c *Config) GetConfigOrDefault(key string, dft interface{}) interface{} {
@@ -116,12 +116,14 @@ func Init(cfg string) error {
 	}
 	// 初始化日志包
 	c.initLog()
+
+	loadConfig()
 	return nil
 }
 
 func (cfg *Config) initConfig() error {
-	viper.AutomaticEnv()     // 读取匹配的环境变量
-	viper.SetEnvPrefix("BS") // 读取环境变量的前缀为 BS
+	viper.AutomaticEnv()      // 读取匹配的环境变量
+	viper.SetEnvPrefix("FPM") // 读取环境变量的前缀为 BS
 	replacer := strings.NewReplacer(".", "_")
 	viper.SetEnvKeyReplacer(replacer)
 	deployMode := viper.GetString("deploy.mode")

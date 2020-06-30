@@ -3,7 +3,6 @@ package router
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -11,6 +10,7 @@ import (
 	"github.com/team4yf/fpm-iot-go-middleware/internal/core"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg"
+	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
 )
 
 type reqCreateDevice struct {
@@ -29,16 +29,16 @@ func Load(app *core.App) {
 		// 获取post的消息体
 		body, err := pkg.GetBodyString(r.Body)
 		if err != nil {
-			log.Printf("Error reading body: %v", err)
+			log.Infof("Error reading body: %v", err)
 			http.Error(w, "can't read body", http.StatusBadRequest)
 			return
 		}
 		// 记录下获取到的数据，用来进行日志查询
-		log.Printf("Receive: %s, body: %s\n", r.URL, body)
+		log.Infof("Receive: %s, body: %s\n", r.URL, body)
 		// 获取设备的类型+品牌，从配置文件中获取对应的参数信息
 		deviceSpecificName := device + "-" + brand
 		if !app.Config.IsSet("notify." + deviceSpecificName) {
-			log.Printf("event type: %s not set in config.json", deviceSpecificName)
+			log.Infof("event type: %s not set in config.json", deviceSpecificName)
 			http.Error(w, "unKnown data source", http.StatusBadRequest)
 			return
 		}
@@ -49,14 +49,14 @@ func Load(app *core.App) {
 			devicePath := app.Config.GetConfigOrDefault("notify."+deviceSpecificName+".devicePath", "$.data").(string)
 			res, err := pkg.GetJsonPathData(body, devicePath)
 			if err != nil {
-				log.Printf("device id not: %v", err)
+				log.Infof("device id not: %v", err)
 				return
 			}
 			deviceID := res.(string)
 			// 通过设备和id获取到具体对应的项目信息，如果设备不存在或者设备状态不对的话，会抛出异常信息
 			uuid, projid, err := app.Service.Receive(device, brand, event, deviceID)
 			if err != nil {
-				log.Printf("Device Not Exists Or Not Actived: %v", err)
+				log.Infof("Device Not Exists Or Not Actived: %v", err)
 				return
 			}
 			wrapper := make(map[string]interface{})
@@ -79,7 +79,7 @@ func Load(app *core.App) {
 		}()
 		// 响应配置文件中的内容
 		response := app.Config.GetMapOrDefault("notify."+deviceSpecificName+".response", nil)
-		// log.Printf("device: %s brand:%s event:%s body:%s response:%s\n", device, brand, event, body, response)
+		// log.Infof("device: %s brand:%s event:%s body:%s response:%s\n", device, brand, event, body, response)
 		app.WriteJSON(w, 200, response)
 	})
 
@@ -91,11 +91,11 @@ func Load(app *core.App) {
 
 		bodyMap, err := pkg.GetBodyMap(r.Body)
 		if err != nil {
-			log.Printf("Error reading body: %v", err)
+			log.Infof("Error reading body: %v", err)
 			http.Error(w, "can't read body", http.StatusBadRequest)
 			return
 		}
-		log.Printf("body %s", bodyMap)
+		log.Infof("body %s", bodyMap)
 
 		data := &model.Device{}
 		data.AppID = bodyMap["appId"].(string)
@@ -108,7 +108,7 @@ func Load(app *core.App) {
 		data.LastUpdateAt = time.Now()
 
 		if err := app.Service.RegisterDevice(data); err != nil {
-			log.Printf("Error register device: %v", err)
+			log.Infof("Error register device: %v", err)
 			http.Error(w, "can't register device", http.StatusBadRequest)
 			return
 		}

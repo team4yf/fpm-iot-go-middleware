@@ -5,9 +5,9 @@ package pkg
 
 import (
 	"fmt"
-	"log"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
+	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
 )
 
 // 定义接口
@@ -46,7 +46,7 @@ func NewMQTTPubSub(url, user, pass string, qos byte, retained bool) PubSub {
 
 // 实现Publish函数
 func (m *MQTTPubSub) Publish(topic string, payload interface{}) {
-	log.Printf("topic: %s, payload: %s", topic, payload)
+	log.Infof("topic: %s, payload: %s", topic, payload)
 	token := m.mClient.Publish(topic, m.qos, m.retained, payload)
 	token.Wait()
 }
