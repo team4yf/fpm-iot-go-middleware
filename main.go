@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	config "github.com/team4yf/fpm-iot-go-middleware/config"
+	lintaiv10 "github.com/team4yf/fpm-iot-go-middleware/external/device/light/lintai/v10"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/core"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
 	s "github.com/team4yf/fpm-iot-go-middleware/internal/service"
@@ -26,6 +28,22 @@ func main() {
 
 	// Init the redis pool
 	pool.Init(config.RedisConfig)
+
+	options := &lintaiv10.Options{
+		AppID:       "LT0314fbf27a4d2986",
+		AppSecret:   "1bc7b874c74623298a6",
+		Username:    "18796664408",
+		TokenExpire: 60 * 1000 * 24 * 7,
+
+		Enviroment: "prod",
+		BaseURL:    "http://101.132.142.5:8088/api",
+	}
+	client := lintaiv10.NewClient(options)
+
+	err := client.Init()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	pubSub := GetPubSub()
 	service := GetService()
