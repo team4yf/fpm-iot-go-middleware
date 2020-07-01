@@ -8,6 +8,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/team4yf/fpm-iot-go-middleware/config"
 
+	//import the postgress
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
@@ -19,6 +20,7 @@ var (
 //CommonMap the common map for database
 type CommonMap map[string]interface{}
 
+//BaseDB the basic db struct
 type BaseDB struct {
 	gorm.DB
 }
@@ -26,7 +28,7 @@ type BaseDB struct {
 //CreateDb create new instance
 func CreateDb() *gorm.DB {
 	//use the config for the app
-	dsn := getDbEngineDSN(&config.Db)
+	dsn := getDbEngineDSN(config.Db)
 	fmt.Printf("db setting: %+v\n", dsn)
 	db, err := gorm.Open(config.Db.Engine, dsn)
 	if err != nil {

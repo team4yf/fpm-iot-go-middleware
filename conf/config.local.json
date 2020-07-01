@@ -24,6 +24,14 @@
         "qos": 0,
         "retain": false
     },
+    "lintaiv10":{
+        "appid":"LT0314fbf27a4d2986",
+        "appsecret":"1bc7b874c74623298a6",
+        "username":"18796664408",
+        "env":"prod",
+        "expired": 10080,
+        "baseurl":"http://101.132.142.5:8088/api"
+    },
     "notify": {
         "light-lt10": {
             "devicePath": "$.imei",

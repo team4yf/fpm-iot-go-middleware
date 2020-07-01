@@ -10,8 +10,10 @@ import (
 
 var pool sync.Pool
 
-var TIMEOUT_CTX = context.Background()
+//DefaultCtx the default context for redis session.
+var DefaultCtx = context.Background()
 
+//Init initionlize the resouce pool
 func Init(opt *redis.Options) {
 	pool = sync.Pool{
 
@@ -22,15 +24,17 @@ func Init(opt *redis.Options) {
 
 }
 
+//Get get a resource from the pool
 func Get() *redis.Client {
 	cli := pool.Get().(*redis.Client)
-	_, err := cli.Ping(TIMEOUT_CTX).Result()
+	_, err := cli.Ping(DefaultCtx).Result()
 	if err != nil {
 		log.Fatal("redis cant connect ", err)
 	}
 	return cli
 }
 
+//Put return back the resource to the pool
 func Put(resource interface{}) {
 	pool.Put(resource)
 }
