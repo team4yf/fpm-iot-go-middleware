@@ -26,18 +26,21 @@ RUN go mod download
 COPY . .
 
 # Build the Go app
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build  -ldflags="-s -w" -o /app/bin/app /app/cmd/main.go
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build  -ldflags="-s -w" -o /app/bin/app /app/main.go
 
 
 FROM alpine:latest
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
   echo http://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
-  apk --no-cache add ca-certificates
+  apk --no-cache add ca-certificates && \
+  apk add tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+  echo "Asia/Shanghai" > /etc/timezone
 
 WORKDIR /app
 
 COPY --from=builder /app/bin/app /app/
+COPY ./conf/config.local.json /app/conf/config.local.json
 # Copy the Pre-built binary file from the previous stage
 
 # Command to run the executable

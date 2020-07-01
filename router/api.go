@@ -19,6 +19,36 @@ type reqCreateDevice struct {
 	projectId int64  `json:"projectId"`
 }
 
+type messageHeader struct {
+	Version   int    `json:"v"`
+	NameSpace string `json:"ns"`
+	Name      string `json:"name"`
+	AppID     string `json:"appId"`
+	ProjID    int64  `json:"projId"`
+	Source    string `json:"source"`
+}
+
+type payloadDevice struct {
+	ID      string                 `json:"id"`
+	Type    string                 `json:"type"`
+	Name    string                 `json:"name"`
+	Brand   string                 `json:"brand"`
+	Version string                 `json:"v"`
+	Extra   map[string]interface{} `json:"x,omitempty"`
+}
+
+type messagePayload struct {
+	Device    payloadDevice `json:"device"`
+	Data      interface{}   `json:"data"`
+	Cgi       string        `json:"cgi"`
+	Timestamp int64         `json:"timestamp"`
+}
+
+type message struct {
+	Header  messageHeader  `json:"header"`
+	Payload messagePayload `json:"payload"`
+}
+
 func Load(app *core.App) {
 	app.Post("/push/{device}/{brand}/{event}", func(w http.ResponseWriter, r *http.Request) {
 		// 从接口路径中获取参数
@@ -47,6 +77,7 @@ func Load(app *core.App) {
 		go func() {
 			// 从配置文件中获取到设备平台推送的消息体中的 设备ID 的JsonPath
 			devicePath := app.Config.GetConfigOrDefault("notify."+deviceSpecificName+".devicePath", "$.data").(string)
+			log.Debugf("jsonPath: %s", devicePath)
 			res, err := pkg.GetJsonPathData(body, devicePath)
 			if err != nil {
 				log.Infof("device id not: %v", err)
@@ -59,20 +90,40 @@ func Load(app *core.App) {
 				log.Infof("Device Not Exists Or Not Actived: %v", err)
 				return
 			}
-			wrapper := make(map[string]interface{})
+
+			msgHeader := messageHeader{
+				Version:   10,
+				NameSpace: "FPM.Lamp." + device,
+				Name:      event,
+				AppID:     uuid,
+				ProjID:    projid,
+				Source:    "HTTP",
+			}
+
 			// 添加固定的静态数据，用于应用平台使用
 			bind := app.Config.GetMapOrDefault("notify."+deviceSpecificName+".bind", nil)
+			msgPayloadDevice := payloadDevice{
+				ID:      deviceID,
+				Type:    device,
+				Name:    "-",
+				Brand:   brand,
+				Version: "v10",
+				Extra:   bind,
+			}
 
-			wrapper["origin"] = body // 源消息体
-			wrapper["event"] = event // 设备事件
-			wrapper["aid"] = uuid    // 设备对应的应用服务平台id
-			wrapper["pid"] = projid  // 设备对应的在服务中的项目id
-			wrapper["sn"] = deviceID // 设备的编码
-			wrapper["type"] = device // 设备对应的类型
-			wrapper["brand"] = brand // 设备对应的品牌
-			wrapper["bind"] = bind   // 设备绑定的静态数据
+			msgPayload := messagePayload{
+				Device:    msgPayloadDevice,
+				Data:      body,
+				Cgi:       deviceID,
+				Timestamp: time.Now().Unix(),
+			}
 
-			j, _ := json.Marshal(wrapper)
+			msg := message{
+				Header:  msgHeader,
+				Payload: msgPayload,
+			}
+
+			j, _ := json.Marshal(msg)
 
 			app.PubSub.Publish(fmt.Sprintf("$d2s/%s/partner/push", uuid), j)
 

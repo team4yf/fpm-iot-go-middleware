@@ -6,6 +6,8 @@ define RECOMMENDED_TAG=
 $(git tag -l | sort -V | tail -n 1 | sed 's#\.# #g' | awk '{ print $1"."$2 + 1".0" }')
 endef
 
+all: install build docker-build docker-push
+
 install:
 	go mod download
 

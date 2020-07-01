@@ -30,8 +30,37 @@ https://github.com/team4yf/fpm-iot-cloud-middleware
 
 根据设备的ID来获取设备对应的 appid，用来区分不同的应用，该信息保存在 redis 中
 key: `device:type:brand: {deviceId: appid,}`
- `^push/:appid/event`
+ `$d2s/{appid}/partner/push`
  
+推送的消息示例
+```json
+{
+  "header":{
+    "v":10,
+    "ns":"FPM.Lamp.light",
+    "name":"beat",
+    "appId":"ceaa191a",
+    "projId":1,
+    "source":"HTTP"
+  },
+  "payload":{
+    "device":{
+      "id":"866971039105809",
+      "type":"light",
+      "name":"-",
+      "brand":"lt10",
+      "v":"v10",
+      "x":{
+        "extra":"1"
+      }
+    },
+    "data":"{\"lightingStatus\":\"1\",\"recordtime\":\"2020-06-29 17:41:14\",\"brightness\":\"20\",\"imei\":\"866971039105809\",\"electricity\":\"45.5\",\"voltage\":\"235.7\"}",
+    "cgi":"866971039105809",
+    "timestamp":1593569795
+  }
+}
+```
+
 JSON数据格式
 
 | 名称 | 描述 | 数据类型 |
