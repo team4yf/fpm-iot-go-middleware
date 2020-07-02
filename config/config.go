@@ -9,7 +9,7 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
-	lintaiv10 "github.com/team4yf/fpm-iot-go-middleware/external/device/light/lintai/v10"
+	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
 )
 
@@ -21,7 +21,7 @@ var (
 	//MqttConfig the mqtt connect config
 	MqttConfig *MqttSetting
 	//LintaiAppConfig lintai v10 config
-	LintaiAppConfig *lintaiv10.Options
+	LintaiAppConfig *rest.LinTaiOptions
 )
 
 // Config 读取配置
@@ -97,7 +97,7 @@ func (cfg *Config) loadConfig() error {
 	MqttConfig.Options.SetUsername(viper.GetString("mqttserver.username"))
 	MqttConfig.Options.SetPassword(viper.GetString("mqttserver.password"))
 
-	LintaiAppConfig = &lintaiv10.Options{
+	LintaiAppConfig = &rest.LinTaiOptions{
 		AppID:       viper.GetString("lintaiv10.appid"),
 		AppSecret:   viper.GetString("lintaiv10.appsecret"),
 		Username:    viper.GetString("lintaiv10.username"),

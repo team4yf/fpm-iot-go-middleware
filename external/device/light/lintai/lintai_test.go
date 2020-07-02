@@ -1,17 +1,18 @@
-package lintaiv10
+package lintai
 
 import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/test"
 )
 
 var client Client
 
 func Setup(t *testing.T) {
-	test.InitTestConfig("../../../../../conf/config.test.json")
-	options := &Options{
+	test.InitTestConfig("../../../../conf/config.test.json")
+	options := &rest.LinTaiOptions{
 		AppID:       "LT0314fbf27a4d2986",
 		AppSecret:   "1bc7b874c74623298a6",
 		Username:    "18796664408",

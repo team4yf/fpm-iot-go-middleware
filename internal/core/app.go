@@ -10,20 +10,22 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"github.com/team4yf/fpm-iot-go-middleware/config"
-	lintaiv10 "github.com/team4yf/fpm-iot-go-middleware/external/device/light/lintai/v10"
+
+	// "github.com/team4yf/fpm-iot-go-middleware/external/device/light/lintai"
 	s "github.com/team4yf/fpm-iot-go-middleware/internal/service"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/pubsub"
 	"github.com/team4yf/fpm-iot-go-middleware/router/middleware"
 )
 
+//App the core application
 type App struct {
-	Router          *mux.Router
-	Middleware      *middleware.Middleware
-	PubSub          pubsub.PubSub
-	Service         s.DeviceService
-	m               alice.Chain
-	LintaiApiClient lintaiv10.Client
+	Router     *mux.Router
+	Middleware *middleware.Middleware
+	PubSub     pubsub.PubSub
+	Service    s.DeviceService
+	m          alice.Chain
+	// LintaiAPI  lintai.Client
 }
 
 func (app *App) Init() {
@@ -31,12 +33,12 @@ func (app *App) Init() {
 	app.Router = mux.NewRouter()
 	app.PubSub = pubsub.NewMQTTPubSub(config.MqttConfig)
 	app.Service = s.NewSimpleDeviceService()
-	app.LintaiApiClient = lintaiv10.NewClient(config.LintaiAppConfig)
+	// app.LintaiAPI = lintaiv.NewClient(config.LintaiAppConfig)
 
-	err := app.LintaiApiClient.Init()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// err := app.LintaiAPI.Init()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 	app.Middleware = &middleware.Middleware{}
 	app.m = alice.New(app.Middleware.LoggerMiddleware, app.Middleware.RecoverMiddleware)
 

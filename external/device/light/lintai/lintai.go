@@ -1,5 +1,5 @@
-//Package lintaiv10 瓴泰科技智慧路灯
-package lintaiv10
+//Package lintai 瓴泰科技智慧路灯
+package lintai
 
 import (
 	"encoding/json"
@@ -8,30 +8,14 @@ import (
 	"sync"
 	"time"
 
+	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/cache"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
 )
 
-//Options 相关的Api初始化选项
-type Options struct {
-	AppID       string        //App ID
-	AppSecret   string        //App Secret
-	Username    string        //用户名
-	TokenExpire time.Duration //Token有效期，通常是一个数字，用于存放在redis缓存的时间
-	Enviroment  string        //服务的调用环境，生产/测试，Prod/Test
-	BaseURL     string        //服务的基础URL地址
-}
-
 //DeviceType 设备类型，1：回路  2：控制器  默认为1
 type DeviceType int
-
-//APIResponse api返回值
-type APIResponse struct {
-	Code int         `json:"code"`
-	Msg  string      `json:"msg,omitempty"`
-	Data interface{} `json:"data,omitempty"`
-}
 
 //LightControlType  2 对应控制器类型
 const LightControlType = 2
@@ -55,17 +39,19 @@ type Client interface {
 	//Init() 客户端初始化函数，通常是验证本地的token，没有则刷新token
 	Init() error
 	//Execute()执行具体的接口参数
-	Execute(api string, body interface{}) (*APIResponse, error)
+	Execute(api string, body interface{}) (*rest.LinTaiAPIResponse, error)
+	//GetAppKey() get the appkey for the client
+	GetAppKey() string
 }
 
 //defaultClient 默认的客户端接口实现
 type defaultClient struct {
-	options    *Options     //初始化参数
-	cacher     cache.Cache  //缓存实例
-	token      string       //获取到的token
-	expireTime time.Time    //过期时间
-	lock       sync.RWMutex //同步锁
-	inited     bool         //初始化标示位
+	options    *rest.LinTaiOptions //初始化参数
+	cacher     cache.Cache         //缓存实例
+	token      string              //获取到的token
+	expireTime time.Time           //过期时间
+	lock       sync.RWMutex        //同步锁
+	inited     bool                //初始化标示位
 
 }
 
@@ -91,7 +77,7 @@ func refreshToken(client *defaultClient, force bool) (token string, err error) {
 		err = rspWrapper.Err
 		return
 	}
-	var apiRsp APIResponse
+	var apiRsp rest.LinTaiAPIResponse
 	err = rspWrapper.ConvertBody(&apiRsp)
 	if err != nil {
 		return
@@ -103,7 +89,7 @@ func refreshToken(client *defaultClient, force bool) (token string, err error) {
 }
 
 //NewClient 新建一个终端
-func NewClient(opts *Options) Client {
+func NewClient(opts *rest.LinTaiOptions) Client {
 	client := &defaultClient{
 		options: opts,
 		inited:  false,
@@ -116,21 +102,26 @@ var errFoo = errors.New("stub")
 func (cli *defaultClient) Init() (err error) {
 	cli.lock.Lock()
 	defer cli.lock.Unlock()
-	cli.cacher = cache.NewRedisCache()
-	token, err := refreshToken(cli, false)
+	if !cli.inited {
+		cli.cacher = cache.NewRedisCache()
+	}
+	token, err := refreshToken(cli, cli.inited)
 	if err != nil {
 		return
 	}
 	cli.inited = true
 	cli.token = token
-	// cli.expireTime = time.Now().Unix() + time.Millisecond*cli.options.TokenExpire
+	cli.expireTime = time.Unix(time.Now().Unix()+(int64)(time.Millisecond*cli.options.TokenExpire), 0)
 	return
 }
 
-func (cli *defaultClient) Execute(api string, body interface{}) (rsp *APIResponse, err error) {
-	// if cli.expireTime > time.Now() {
-
-	// }
+func (cli *defaultClient) Execute(api string, body interface{}) (rsp *rest.LinTaiAPIResponse, err error) {
+	//check the key expired time, refresh token
+	if cli.expireTime.Before(time.Now()) {
+		if err = cli.Init(); err != nil {
+			return
+		}
+	}
 
 	data, _ := json.Marshal(body)
 	log.Infof("%s", (string)(data))
@@ -147,4 +138,7 @@ func (cli *defaultClient) Execute(api string, body interface{}) (rsp *APIRespons
 		return
 	}
 	return
+}
+func (cli *defaultClient) GetAppKey() string {
+	return cli.options.AppID
 }
