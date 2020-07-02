@@ -27,7 +27,7 @@ type mqttPS struct {
 func NewMQTTPubSub(c *config.MqttSetting) PubSub {
 	client := MQTT.NewClient(c.Options)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
-		log.Fatal(token.Error().Error())
+		log.Fatal(token.Error())
 	}
 	pubSub := &mqttPS{
 		mClient: client,

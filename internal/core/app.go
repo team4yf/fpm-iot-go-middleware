@@ -10,8 +10,8 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"github.com/team4yf/fpm-iot-go-middleware/config"
+	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 
-	// "github.com/team4yf/fpm-iot-go-middleware/external/device/light/lintai"
 	s "github.com/team4yf/fpm-iot-go-middleware/internal/service"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/pubsub"
@@ -25,12 +25,13 @@ type App struct {
 	PubSub     pubsub.PubSub
 	Service    s.DeviceService
 	m          alice.Chain
-	// LintaiAPI  lintai.Client
+	LintaiAPI  rest.Client
 }
 
 func (app *App) Init() {
 
 	app.Router = mux.NewRouter()
+	// log.Debugf("mqtt config: %+v", *config.MqttConfig)
 	app.PubSub = pubsub.NewMQTTPubSub(config.MqttConfig)
 	app.Service = s.NewSimpleDeviceService()
 	// app.LintaiAPI = lintaiv.NewClient(config.LintaiAppConfig)

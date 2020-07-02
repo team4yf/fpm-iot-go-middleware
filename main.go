@@ -23,11 +23,12 @@ func main() {
 	migration.Install()
 
 	// Init the redis pool
-	pool.Init(config.RedisConfig)
+	pool.InitRedis(config.RedisConfig)
 
 	app := &core.App{}
 
 	app.Init()
+	//TODO: get all rest client config
 	router.Load(app)
 	app.Run(fmt.Sprintf("%v:%v",
 		config.GetConfigOrDefault("server.host", "0.0.0.0"), config.GetConfigOrDefault("server.port", "9000")))

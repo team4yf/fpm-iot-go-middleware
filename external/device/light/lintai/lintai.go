@@ -34,24 +34,14 @@ func init() {
 	}
 }
 
-//Client 调用接口的客户端
-type Client interface {
-	//Init() 客户端初始化函数，通常是验证本地的token，没有则刷新token
-	Init() error
-	//Execute()执行具体的接口参数
-	Execute(api string, body interface{}) (*rest.LinTaiAPIResponse, error)
-	//GetAppKey() get the appkey for the client
-	GetAppKey() string
-}
-
 //defaultClient 默认的客户端接口实现
 type defaultClient struct {
-	options    *rest.LinTaiOptions //初始化参数
-	cacher     cache.Cache         //缓存实例
-	token      string              //获取到的token
-	expireTime time.Time           //过期时间
-	lock       sync.RWMutex        //同步锁
-	inited     bool                //初始化标示位
+	options    *rest.Options //初始化参数
+	cacher     cache.Cache   //缓存实例
+	token      string        //获取到的token
+	expireTime time.Time     //过期时间
+	lock       sync.RWMutex  //同步锁
+	inited     bool          //初始化标示位
 
 }
 
@@ -77,22 +67,24 @@ func refreshToken(client *defaultClient, force bool) (token string, err error) {
 		err = rspWrapper.Err
 		return
 	}
-	var apiRsp rest.LinTaiAPIResponse
-	err = rspWrapper.ConvertBody(&apiRsp)
+
+	var data rest.Data
+	err = rspWrapper.ConvertBody(&data)
 	if err != nil {
 		return
 	}
 	// log.Infof("getToken: %+v", apiRsp.Data)
-	token = apiRsp.Data.(string)
+	token = data["Data"].(string)
 	err = client.cacher.SetString(key, token, client.options.TokenExpire*time.Millisecond)
 	return
 }
 
 //NewClient 新建一个终端
-func NewClient(opts *rest.LinTaiOptions) Client {
+func NewClient(opts *rest.Options, cacher cache.Cache) rest.Client {
 	client := &defaultClient{
 		options: opts,
 		inited:  false,
+		cacher:  cacher,
 	}
 	return client
 }
@@ -102,9 +94,6 @@ var errFoo = errors.New("stub")
 func (cli *defaultClient) Init() (err error) {
 	cli.lock.Lock()
 	defer cli.lock.Unlock()
-	if !cli.inited {
-		cli.cacher = cache.NewRedisCache()
-	}
 	token, err := refreshToken(cli, cli.inited)
 	if err != nil {
 		return
@@ -115,7 +104,7 @@ func (cli *defaultClient) Init() (err error) {
 	return
 }
 
-func (cli *defaultClient) Execute(api string, body interface{}) (rsp *rest.LinTaiAPIResponse, err error) {
+func (cli *defaultClient) Execute(api string, body interface{}) (rsp *rest.APIResponse, err error) {
 	//check the key expired time, refresh token
 	if cli.expireTime.Before(time.Now()) {
 		if err = cli.Init(); err != nil {
@@ -133,9 +122,14 @@ func (cli *defaultClient) Execute(api string, body interface{}) (rsp *rest.LinTa
 		err = rspWrapper.Err
 		return
 	}
-	err = rspWrapper.ConvertBody(&rsp)
+	var rspData rest.Data
+	err = rspWrapper.ConvertBody(&rspData)
 	if err != nil {
 		return
+	}
+	rsp = &rest.APIResponse{
+		HTTPStatus: rspWrapper.StatusCode,
+		Data:       rspData,
 	}
 	return
 }

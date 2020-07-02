@@ -22,7 +22,8 @@
         "username": "admin",
         "password": "123123123",
         "qos": 0,
-        "retain": false
+        "retain": false,
+        "clientid": "fpmiot"
     },
     "lintaiv10":{
         "appid":"LT0314fbf27a4d2986",

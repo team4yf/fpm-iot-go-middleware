@@ -22,30 +22,17 @@
         "username": "admin",
         "password": "123123123",
         "qos": 0,
-        "retain": false
+        "retain": false,
+        "clientid": "fpmiot"
     },
-    "lintaiv10":{
-        "appid":"LT0314fbf27a4d2986",
-        "appsecret":"1bc7b874c74623298a6",
-        "username":"18796664408",
-        "env":"prod",
-        "expired": 10080,
-        "baseurl":"http://101.132.142.5:8088/api"
-    },
+    
     "notify": {
         "light-lt10": {
             "devicePath": "$.imei",
             "bodyparser": "json",
             "bind": { "extra": "1" },
             "response": { "code": 200 },
-            "app":{
-                "appid":"LT0314fbf27a4d2986",
-                "appsecret":"1bc7b874c74623298a6",
-                "username":"18796664408",
-                "env":"prod",
-                "expired": 10080,
-                "baseurl":"http://101.132.142.5:8088/api"
-            }
+            "iotid": "ceaa191a"
         },
         "charger-tld10": {
             "devicePath": "$.data",

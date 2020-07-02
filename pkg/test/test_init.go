@@ -1,18 +1,17 @@
-//this just for test.go init
+//Package test this just for test.go init
 package test
 
 import (
 	"github.com/team4yf/fpm-iot-go-middleware/config"
-	"github.com/team4yf/fpm-iot-go-middleware/pkg/pool"
+	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
 )
 
 func InitTestConfig(testFile string) {
 
 	config.Init(testFile)
-	// model.CreateDb()
-	// migration := &model.Migration{}
-	// migration.Install()
-	pool.Init(config.RedisConfig)
+	model.CreateDb()
+	migration := &model.Migration{}
+	migration.Install()
 }
 
 func CheckErr(err error) {

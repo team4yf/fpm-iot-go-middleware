@@ -3,14 +3,13 @@ package config
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
-	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
+	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
 )
 
 var (
@@ -20,8 +19,6 @@ var (
 	RedisConfig *redis.Options
 	//MqttConfig the mqtt connect config
 	MqttConfig *MqttSetting
-	//LintaiAppConfig lintai v10 config
-	LintaiAppConfig *rest.LinTaiOptions
 )
 
 // Config 读取配置
@@ -93,19 +90,9 @@ func (cfg *Config) loadConfig() error {
 	MqttConfig.Options.AddBroker(fmt.Sprintf("tcp://%s:%d",
 		viper.GetString("mqttserver.host"),
 		viper.GetInt("mqttserver.port")))
-	// opts.SetClientID("go-simple")
+	MqttConfig.Options.SetClientID(viper.GetString("mqttserver.clientid") + utils.GenUUID())
 	MqttConfig.Options.SetUsername(viper.GetString("mqttserver.username"))
 	MqttConfig.Options.SetPassword(viper.GetString("mqttserver.password"))
-
-	LintaiAppConfig = &rest.LinTaiOptions{
-		AppID:       viper.GetString("lintaiv10.appid"),
-		AppSecret:   viper.GetString("lintaiv10.appsecret"),
-		Username:    viper.GetString("lintaiv10.username"),
-		TokenExpire: time.Duration(viper.GetInt("lintaiv10.expired")) * time.Second,
-
-		Enviroment: viper.GetString("lintaiv10.env"),
-		BaseURL:    viper.GetString("lintaiv10.baseurl"),
-	}
 	return nil
 }
 

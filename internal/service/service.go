@@ -32,9 +32,9 @@ type SimpleDeviceService struct {
 }
 
 func NewSimpleDeviceService() DeviceService {
-
+	rdsClient, _ := pool.Get("redis")
 	service := &SimpleDeviceService{
-		cli:             pool.Get(),
+		cli:             rdsClient.(*redis.Client),
 		applicationRepo: repo.NewApplictionRepo(),
 		deviceRepo:      repo.NewDeviceRepo(),
 		projectRepo:     repo.NewProjectRepo(),
