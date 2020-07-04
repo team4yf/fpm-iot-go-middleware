@@ -18,6 +18,25 @@ type Errno struct {
 func (err Errno) Error() string {
 	return err.Result
 }
+func NewsWithError(err error) *Errno {
+	return &Errno{
+		Code:   -1,
+		Result: err.Error(),
+	}
+}
+
+func NewsWithCode(code int, result string) *Errno {
+	return &Errno{
+		Code:   code,
+		Result: result,
+	}
+}
+func News(err string) *Errno {
+	return &Errno{
+		Code:   -1,
+		Result: err,
+	}
+}
 
 func DecodeErr(err error) (int, string) {
 	if err == nil {

@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"github.com/team4yf/fpm-iot-go-middleware/config"
+	"github.com/team4yf/fpm-iot-go-middleware/errno"
 	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 
 	s "github.com/team4yf/fpm-iot-go-middleware/internal/service"
@@ -63,5 +64,34 @@ func (app *App) WriteJSON(w http.ResponseWriter, code int, payload interface{}) 
 	data, _ := json.Marshal(payload)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(code)
+	w.Write(data)
+}
+
+func (app *App) SendOk(w http.ResponseWriter, payload interface{}) {
+	data, _ := json.Marshal(payload)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(data)
+}
+
+func (app *App) Fail(w http.ResponseWriter, result string) {
+	err := errno.News(result)
+	app.SendError(w, err)
+}
+
+func (app *App) FailWithError(w http.ResponseWriter, err error) {
+	e := errno.NewsWithError(err)
+	app.SendError(w, e)
+}
+
+func (app *App) FailWithCode(w http.ResponseWriter, code int, result string) {
+	err := errno.NewsWithCode(code, result)
+	app.SendError(w, err)
+}
+
+func (app *App) SendError(w http.ResponseWriter, err *errno.Errno) {
+	data, _ := json.Marshal(err)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	w.Write(data)
 }
