@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	config "github.com/team4yf/fpm-iot-go-middleware/config"
+	"github.com/team4yf/fpm-iot-go-middleware/config"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/core"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/pool"
@@ -29,7 +29,8 @@ func main() {
 
 	app.Init()
 	//TODO: get all rest client config
-	router.Load(app)
+	router.LoadPushAPI(app)
+	router.LoadDeviceAPI(app)
 	app.Run(fmt.Sprintf("%v:%v",
 		config.GetConfigOrDefault("server.host", "0.0.0.0"), config.GetConfigOrDefault("server.port", "9000")))
 }
