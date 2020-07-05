@@ -1,5 +1,7 @@
 package errno
 
+import "errors"
+
 var (
 	// Common errors
 	OK                        = &Errno{Code: 0, Result: "OK"}
@@ -9,6 +11,9 @@ var (
 	CardRequiredError         = &Errno{Code: 90004, Result: "Card required error"}
 	GroupCodeRequiredError    = &Errno{Code: 90005, Result: "Group code required error"}
 )
+
+//ErrFoo default stub error
+var ErrFoo = errors.New("stub")
 
 type Errno struct {
 	Code   int    `json:"code"`

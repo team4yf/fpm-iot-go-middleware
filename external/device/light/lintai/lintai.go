@@ -3,7 +3,6 @@ package lintai
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -88,8 +87,6 @@ func NewClient(opts *rest.Options, cacher cache.Cache) rest.Client {
 	}
 	return client
 }
-
-var errFoo = errors.New("stub")
 
 func (cli *defaultClient) Init() (err error) {
 	cli.lock.Lock()

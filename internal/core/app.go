@@ -32,15 +32,8 @@ type App struct {
 func (app *App) Init() {
 
 	app.Router = mux.NewRouter()
-	// log.Debugf("mqtt config: %+v", *config.MqttConfig)
 	app.PubSub = pubsub.NewMQTTPubSub(config.MqttConfig)
 	app.Service = s.NewSimpleDeviceService()
-	// app.LintaiAPI = lintaiv.NewClient(config.LintaiAppConfig)
-
-	// err := app.LintaiAPI.Init()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
 	app.Middleware = &middleware.Middleware{}
 	app.m = alice.New(app.Middleware.LoggerMiddleware, app.Middleware.RecoverMiddleware)
 

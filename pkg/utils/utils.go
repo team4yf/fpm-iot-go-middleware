@@ -21,6 +21,7 @@ var (
 	clientIP = "127.0.0.1"
 )
 
+//CheckErr panic if err is not nil
 func CheckErr(err error) {
 	if err != nil {
 		panic(err)
@@ -40,6 +41,7 @@ func GetLocalIP() string {
 	return clientIP
 }
 
+//CutBigIntSlice cut long int slice to [][] slice
 func CutBigIntSlice(origin []int, size int) (desc [][]int) {
 	total := len(origin)
 	rows := total / size
@@ -60,6 +62,7 @@ func CutBigIntSlice(origin []int, size int) (desc [][]int) {
 	return
 }
 
+//JSON2String convert the json object to string
 func JSON2String(j interface{}) (str string) {
 	bytes, err := json.Marshal(j)
 	if err != nil {
@@ -69,6 +72,7 @@ func JSON2String(j interface{}) (str string) {
 	return
 }
 
+//StringToStruct convert the string to struct
 func StringToStruct(data string, desc interface{}) (err error) {
 	if err = json.Unmarshal(([]byte)(data), desc); err != nil {
 		return
@@ -77,8 +81,9 @@ func StringToStruct(data string, desc interface{}) (err error) {
 }
 
 // GenShortID 生成一个id
-func GenShortID() (string, error) {
-	return shortid.Generate()
+func GenShortID() string {
+	sid, _ := shortid.Generate()
+	return sid
 }
 
 // GenUUID 生成随机字符串，eg: 76d27e8c-a80e-48c8-ad20-e5562e0f67e4
