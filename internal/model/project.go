@@ -13,6 +13,7 @@ type Project struct {
 	ProjectID  int64  `json:"projectId"`          //对应的项目ID
 	Code       string `json:"code"`               //项目对应的Code
 	EntryURL   string `json:"entryUrl"`           // 项目对应的入口地址
+	Setting    string `json:"setting"`            //项目的自定义设置信息
 }
 
 //TableName 对应表名
