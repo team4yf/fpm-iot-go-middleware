@@ -21,6 +21,8 @@ type DeviceService interface {
 	RegisterDevice(*m.Device) error
 	GetDeviceInfo(string) (*m.Device, error)
 	Receive(deviceType, brand, event, deviceID string) (string, int64, error)
+
+	GetSetting(appID string, projectID int64) (map[string]interface{}, error)
 }
 
 type SimpleDeviceService struct {
@@ -47,6 +49,9 @@ func (s *SimpleDeviceService) RegisterDevice(device *m.Device) (err error) {
 }
 func (s *SimpleDeviceService) GetDeviceInfo(sn string) (*m.Device, error) {
 	return s.deviceRepo.Get(sn)
+}
+func (s *SimpleDeviceService) GetSetting(appID string, projectID int64) (map[string]interface{}, error) {
+	return s.projectRepo.GetSetting(appID, projectID)
 }
 
 // 处理获取到数据之后的逻辑

@@ -10,40 +10,11 @@ import (
 	"github.com/team4yf/fpm-iot-go-middleware/config"
 	"github.com/team4yf/fpm-iot-go-middleware/errno"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/core"
+	msg "github.com/team4yf/fpm-iot-go-middleware/internal/message"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
 )
-
-type messageHeader struct {
-	Version   int    `json:"v"`
-	NameSpace string `json:"ns"`
-	Name      string `json:"name"`
-	AppID     string `json:"appId"`
-	ProjID    int64  `json:"projId"`
-	Source    string `json:"source"`
-}
-
-type payloadDevice struct {
-	ID      string                 `json:"id"`
-	Type    string                 `json:"type"`
-	Name    string                 `json:"name"`
-	Brand   string                 `json:"brand"`
-	Version string                 `json:"v"`
-	Extra   map[string]interface{} `json:"x,omitempty"`
-}
-
-type messagePayload struct {
-	Device    payloadDevice `json:"device"`
-	Data      interface{}   `json:"data"`
-	Cgi       string        `json:"cgi"`
-	Timestamp int64         `json:"timestamp"`
-}
-
-type message struct {
-	Header  messageHeader  `json:"header"`
-	Payload messagePayload `json:"payload"`
-}
 
 //PushHandler 推送相关的处理函数
 func PushHandler(app *core.App) func(http.ResponseWriter, *http.Request) {
@@ -86,7 +57,7 @@ func PushHandler(app *core.App) func(http.ResponseWriter, *http.Request) {
 				return
 			}
 
-			msgHeader := messageHeader{
+			msgHeader := &msg.Header{
 				Version:   10,
 				NameSpace: "FPM.Lamp." + device,
 				Name:      event,
@@ -97,7 +68,7 @@ func PushHandler(app *core.App) func(http.ResponseWriter, *http.Request) {
 
 			// 添加固定的静态数据，用于应用平台使用
 			bind := config.GetMapOrDefault("notify."+deviceSpecificName+".bind", nil)
-			msgPayloadDevice := payloadDevice{
+			msgPayloadDevice := msg.Device{
 				ID:      deviceID,
 				Type:    device,
 				Name:    "-",
@@ -106,21 +77,21 @@ func PushHandler(app *core.App) func(http.ResponseWriter, *http.Request) {
 				Extra:   bind,
 			}
 
-			msgPayload := messagePayload{
+			msgPayload := &msg.D2SPayload{
 				Device:    msgPayloadDevice,
 				Data:      body,
 				Cgi:       deviceID,
 				Timestamp: time.Now().Unix(),
 			}
 
-			msg := message{
+			msg := msg.D2SMessage{
 				Header:  msgHeader,
 				Payload: msgPayload,
 			}
 
 			j, _ := json.Marshal(msg)
 
-			app.PubSub.Publish(fmt.Sprintf("$d2s/%s/partner/push", uuid), j)
+			app.Publish(fmt.Sprintf("$d2s/%s/partner/push", uuid), j)
 
 		}()
 		// 响应配置文件中的内容
