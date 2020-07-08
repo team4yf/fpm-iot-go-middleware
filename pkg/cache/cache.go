@@ -1,15 +1,14 @@
-// 用于缓存的接口
+//Package cache 用于缓存的接口
 package cache
 
 import (
-	"context"
 	"time"
 )
 
-//TIMEOUT_CTX 默认的超时上下文
-var TIMEOUT_CTX = context.Background()
-
+//Cache the Cache interface defination
 type Cache interface {
+	PaddingKey(key string) string
+
 	Set(key string, val interface{}, duration time.Duration) error
 	SetString(key, val string, duration time.Duration) error
 	SetInt(key string, val int64, duration time.Duration) error

@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -15,26 +16,32 @@ import (
 var (
 	errNotDoneYet = errors.New("Not Done Yet!")
 	errNoData     = errors.New("Find Nothing!")
-	TIMEOUT_CTX   = context.Background()
+	timeoutCtx    = context.Background()
 	Cache         cache.Cache
 )
 
 type redisCache struct {
-	cli *redis.Client
+	cli       *redis.Client
+	perfixKey string
 }
 
 //NewRedisCache 创建一个新的基于Redis实现的服务
 // 需要传入配置的信息
-func NewRedisCache(c *redis.Client) cache.Cache {
+func NewRedisCache(prefix string, c *redis.Client) cache.Cache {
 	cache := &redisCache{
-		cli: c,
+		cli:       c,
+		perfixKey: prefix,
 	}
 	Cache = cache
 	return cache
 }
 
+func (r *redisCache) PaddingKey(key string) string {
+	return fmt.Sprintf("%s:%s", r.perfixKey, key)
+}
+
 func (r *redisCache) SetString(key, val string, duration time.Duration) error {
-	if err := r.cli.Set(TIMEOUT_CTX, key, val, duration).Err(); err != nil {
+	if err := r.cli.Set(timeoutCtx, r.PaddingKey(key), val, duration).Err(); err != nil {
 		return errs.Wrap(err, "set data to redis set err")
 	}
 	return nil
@@ -44,7 +51,7 @@ func (r *redisCache) SetObject(key string, val interface{}, duration time.Durati
 	if err != nil {
 		return errs.Wrap(err, "marshal data err")
 	}
-	if err = r.cli.Set(TIMEOUT_CTX, key, string(raw), duration).Err(); err != nil {
+	if err = r.cli.Set(timeoutCtx, r.PaddingKey(key), string(raw), duration).Err(); err != nil {
 		return errs.Wrap(err, "set data to redis set err")
 	}
 	return nil
@@ -55,22 +62,33 @@ func (r *redisCache) Set(key string, val interface{}, duration time.Duration) er
 }
 
 func (r *redisCache) SetInt(key string, val int64, duration time.Duration) error {
-	if err := r.cli.Set(TIMEOUT_CTX, key, val, duration).Err(); err != nil {
+	if err := r.cli.Set(timeoutCtx, r.PaddingKey(key), val, duration).Err(); err != nil {
 		return errs.Wrap(err, "set data to redis set err")
 	}
 	return nil
+}
+
+func (r *redisCache) GetString(key string) (val string, err error) {
+	val, err = r.cli.Get(timeoutCtx, r.PaddingKey(key)).Result()
+	if err != nil {
+		if err == redis.Nil {
+			err = nil
+			return
+		}
+		err = errs.Wrap(err, "redis do get error:"+r.PaddingKey(key))
+		return
+	}
+	return
+
 }
 
 func (r *redisCache) Get(key string) (interface{}, error) {
 	return r.GetString(key)
 }
 func (r *redisCache) GetInt(key string) (int64, error) {
-	val, err := r.cli.Get(TIMEOUT_CTX, key).Result()
+	val, err := r.GetString(key)
 	if err != nil {
-		if err == redis.Nil {
-			return -1, nil
-		}
-		return -1, errs.Wrap(err, "redis do get error:"+key)
+		return -1, err
 	}
 	var i int64
 	i, err = strconv.ParseInt(val, 10, 64)
@@ -81,14 +99,10 @@ func (r *redisCache) GetInt(key string) (int64, error) {
 }
 
 func (r *redisCache) GetObject(key string, obj interface{}) (bool, error) {
-	val, err := r.cli.Get(TIMEOUT_CTX, key).Result()
+	val, err := r.GetString(key)
 	if err != nil {
-		if err == redis.Nil {
-			return false, nil
-		}
-		return false, errs.Wrap(err, "redis do get error:"+key)
+		return false, err
 	}
-
 	err = json.Unmarshal([]byte(val), obj)
 	if err != nil {
 		return false, errs.Wrap(err, "Unmarshal error")
@@ -97,21 +111,20 @@ func (r *redisCache) GetObject(key string, obj interface{}) (bool, error) {
 
 }
 
-func (r *redisCache) GetString(key string) (string, error) {
-	if val, err := r.cli.Get(TIMEOUT_CTX, key).Result(); err != nil {
-		if err == redis.Nil {
-			return "", nil
-		}
-		return "", errs.Wrap(err, "redis do get error:"+key)
-	} else {
-		return val, nil
-	}
-}
 func (r *redisCache) GetMap(key string) (map[string]interface{}, error) {
-	return nil, errNotDoneYet
+	val, err := r.GetString(key)
+	if err != nil {
+		return nil, err
+	}
+	obj := make(map[string]interface{})
+	err = json.Unmarshal([]byte(val), obj)
+	if err != nil {
+		return nil, errs.Wrap(err, "Unmarshal error")
+	}
+	return obj, nil
 }
 func (r *redisCache) IsSet(key string) (bool, error) {
-	cmd := r.cli.Exists(TIMEOUT_CTX, key)
+	cmd := r.cli.Exists(timeoutCtx, r.PaddingKey(key))
 	value, err := cmd.Result()
 	if err != nil {
 		return false, err
@@ -120,14 +133,15 @@ func (r *redisCache) IsSet(key string) (bool, error) {
 }
 
 func (r *redisCache) Remove(key string) (bool, error) {
-	err := r.cli.Del(TIMEOUT_CTX, key).Err()
+	err := r.cli.Del(timeoutCtx, r.PaddingKey(key)).Err()
 	if err != nil {
 		return false, err
 	}
 	return true, nil
 }
+
 func (r *redisCache) SafetyIncr(key string, step int64) (bool, error) {
-	err := r.cli.IncrBy(TIMEOUT_CTX, key, step).Err()
+	err := r.cli.IncrBy(timeoutCtx, r.PaddingKey(key), step).Err()
 	if err != nil {
 		return false, err
 	}

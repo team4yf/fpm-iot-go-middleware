@@ -19,6 +19,8 @@ var (
 	RedisConfig *redis.Options
 	//MqttConfig the mqtt connect config
 	MqttConfig *MqttSetting
+	//AppName the app name
+	AppName string
 )
 
 // Config 读取配置
@@ -65,6 +67,7 @@ func (cfg *Config) loadConfig() error {
 		return errors.WithStack(err)
 	}
 
+	AppName = viper.GetString("name")
 	Db = &DBSetting{
 		Engine:   viper.GetString("db.engine"),
 		User:     viper.GetString("db.user"),

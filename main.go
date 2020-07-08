@@ -33,8 +33,7 @@ func main() {
 	router.LoadPushAPI(app)
 	router.LoadDeviceAPI(app)
 
-	consumer.InjectApp(app)
-	app.Subscribe("$s2d/+/+/send", consumer.DefaultMqttConsumer)
+	app.Subscribe("$s2d/+/+/send", consumer.DefaultMqttConsumer(app))
 
 	app.Run(fmt.Sprintf("%v:%v",
 		config.GetConfigOrDefault("server.host", "0.0.0.0"), config.GetConfigOrDefault("server.port", "9000")))

@@ -19,8 +19,6 @@ type Client struct {
 	CertPath    string        `json:"certPath"`   // 证书路径
 	Type        string        `json:"type"`       // client 对应的类型：Env, Light, Camer
 	Status      int           `json:"status"`     // client状态
-	ProjectID   int64         `json:"projectId"`  // 对应的项目ID
-	AppID       string        `json:"appId"`      // 对应的应用ID
 }
 
 //TableName 对应表名

@@ -25,7 +25,7 @@ func Setup(t *testing.T) {
 		BaseURL:    "http://101.132.142.5:8088/api",
 	}
 	pool.InitRedis(config.RedisConfig)
-	cache := rds.NewRedisCache(pool.GetRedis())
+	cache := rds.NewRedisCache("test", pool.GetRedis())
 	client = NewClient(options, cache)
 
 	err := client.Init()

@@ -20,20 +20,20 @@ func NewRedisLocker(c *redis.Client) cache.SyncLocker {
 }
 
 func (r *redisLocker) GetLock(key string, expired time.Duration) bool {
-	ok, err := r.cli.SetNX(TIMEOUT_CTX, key, 1, time.Duration(0)).Result()
+	ok, err := r.cli.SetNX(timeoutCtx, key, 1, time.Duration(0)).Result()
 	if err != nil {
 		return false
 	}
 	// 设置过期时间，防止进程挂了之后，无法释放
-	ok, err = r.cli.Expire(TIMEOUT_CTX, key, expired*time.Second).Result()
+	ok, err = r.cli.Expire(timeoutCtx, key, expired*time.Second).Result()
 	if err != nil {
-		r.cli.Del(TIMEOUT_CTX, key).Err()
+		r.cli.Del(timeoutCtx, key).Err()
 		return false
 	}
 	return ok
 }
 func (r *redisLocker) ReleaseLock(key string) error {
-	err := r.cli.Del(TIMEOUT_CTX, key).Err()
+	err := r.cli.Del(timeoutCtx, key).Err()
 	if err != nil {
 		return err
 	}

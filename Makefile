@@ -27,9 +27,3 @@ docker-build:
 
 docker-push:
 	docker push yfsoftcom/fpm-iot-middleware:v2.0
-
-docker-run:
-	docker run -e "REDIS_HOST=192.168.88.111" -p 9000:9000 fpm-iot-middleware:v2.0
-
-docker-dev:
-	docker-compose -f docker-compose.dev.yml up --build -d
