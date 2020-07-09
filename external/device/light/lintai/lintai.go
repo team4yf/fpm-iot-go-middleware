@@ -73,7 +73,7 @@ func refreshToken(client *defaultClient, force bool) (token string, err error) {
 		return
 	}
 	// log.Infof("getToken: %+v", apiRsp.Data)
-	token = data["Data"].(string)
+	token = data["data"].(string)
 	err = client.cacher.SetString(key, token, client.options.TokenExpire*time.Millisecond)
 	return
 }

@@ -19,7 +19,7 @@ func TestRedisIsSet(t *testing.T) {
 	client, success := pool.Get("redis")
 	assert.Equal(t, true, success, "Get should return true")
 	cli := client.(*redis.Client)
-	redisCache := NewRedisCache(cli)
+	redisCache := NewRedisCache("test", cli)
 
 	var err error
 	err = redisCache.SetInt("a", 1, 100*time.Second)

@@ -4,6 +4,7 @@ package consumer
 import (
 	"strings"
 
+	"github.com/team4yf/fpm-iot-go-middleware/external/device/light"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/core"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/message"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
@@ -13,6 +14,8 @@ import (
 //DefaultMqttConsumer the default subscriber of the mqtt mq server
 //See detail: https://shimo.im/docs/bJaoNiMc4yEfkRSt#anchor-MFbv
 func DefaultMqttConsumer(app *core.App) func(interface{}, interface{}) {
+
+	light.Init()
 
 	return func(topic, datastream interface{}) {
 		str := (string)(datastream.([]byte))
@@ -82,10 +85,21 @@ func feedback() {
 
 func controlLight(lightSetting map[string]interface{}, header *message.Header, payloads []*message.S2DPayload) {
 
+	client, err := light.NewAPIClient(lightSetting["brand"].(string), lightSetting["appid"].(string))
+	if err != nil {
+		log.Errorf("cant get the client of brand %s, id %s, error: %+v", lightSetting["brand"].(string), lightSetting["appid"].(string), err)
+	}
 	//use the appID & projID to find the setting
 	//
 	// control single deivce
 	if header.Name == "Control" {
-
+		payload := payloads[0]
+		cmd, args := payload.Cmd, payload.Argument
+		rsp, err := client.Execute(cmd, args)
+		if err != nil {
+			log.Errorf("execute api control error %+v", err)
+			return
+		}
+		log.Infof("Payload:%+v Response: %+v", payload, rsp)
 	}
 }
