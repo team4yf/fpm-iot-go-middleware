@@ -10,6 +10,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+//ResponseWrapper the wrapper of the http response
 type ResponseWrapper struct {
 	StatusCode int
 	Success    bool
@@ -18,18 +19,21 @@ type ResponseWrapper struct {
 	Header     http.Header
 }
 
-//Convert the body to another struct
+//ConvertBody Convert the body to another struct
 func (rsp *ResponseWrapper) ConvertBody(data interface{}) (err error) {
 	if json.Unmarshal(rsp.Body, data); err != nil {
 		return
 	}
 	return
 }
+
+//GetStringBody get the string of the body
 func (rsp *ResponseWrapper) GetStringBody() string {
 
 	return (string)(rsp.Body)
 }
 
+//Get send a get request with timeout
 func Get(url string, timeout int) ResponseWrapper {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -39,6 +43,7 @@ func Get(url string, timeout int) ResponseWrapper {
 	return request(req, timeout)
 }
 
+//GetWithHeader send a get request with header and timeout
 func GetWithHeader(url string, header map[string]string, timeout int) ResponseWrapper {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -50,6 +55,8 @@ func GetWithHeader(url string, header map[string]string, timeout int) ResponseWr
 
 	return request(req, timeout)
 }
+
+//PostParams post a form request with timeout
 func PostParams(url string, params string, timeout int) ResponseWrapper {
 	buf := bytes.NewBufferString(params)
 	req, err := http.NewRequest("POST", url, buf)
@@ -61,7 +68,8 @@ func PostParams(url string, params string, timeout int) ResponseWrapper {
 	return request(req, timeout)
 }
 
-func PostJson(url string, body []byte, timeout int) ResponseWrapper {
+//PostJSON post a json data request with timeout
+func PostJSON(url string, body []byte, timeout int) ResponseWrapper {
 	buf := bytes.NewBuffer(body)
 	req, err := http.NewRequest("POST", url, buf)
 	if err != nil {
@@ -72,7 +80,8 @@ func PostJson(url string, body []byte, timeout int) ResponseWrapper {
 	return request(req, timeout)
 }
 
-func PostJsonWithHeader(url string, header map[string]string, body []byte, timeout int) ResponseWrapper {
+//PostJSONWithHeader post json & header with timeout
+func PostJSONWithHeader(url string, header map[string]string, body []byte, timeout int) ResponseWrapper {
 	buf := bytes.NewBuffer(body)
 	req, err := http.NewRequest("POST", url, buf)
 	if err != nil {

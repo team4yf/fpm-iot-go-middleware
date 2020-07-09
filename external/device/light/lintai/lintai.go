@@ -112,7 +112,7 @@ func (cli *defaultClient) Execute(api string, body interface{}) (rsp *rest.APIRe
 	data, _ := json.Marshal(body)
 	log.Infof("%s", (string)(data))
 	opts := cli.options
-	rspWrapper := utils.PostJsonWithHeader(opts.BaseURL+apiURL[api], map[string]string{
+	rspWrapper := utils.PostJSONWithHeader(opts.BaseURL+apiURL[api], map[string]string{
 		"accessToken": cli.token,
 	}, data, 120)
 	if !rspWrapper.Success {
