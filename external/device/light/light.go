@@ -55,7 +55,7 @@ func NewAPIClient(brand, appid string) (rest.Client, error) {
 	}
 
 	switch brand {
-	case "lintai", "lt10":
+	case "lintai":
 		client = lintai.NewClient(clientConfigs[key], clientService.GetCache())
 
 	default:

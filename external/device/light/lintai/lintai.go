@@ -47,7 +47,7 @@ type defaultClient struct {
 func refreshToken(client *defaultClient, force bool) (token string, err error) {
 
 	opts := client.options
-	key := fmt.Sprintf("token:light:lintaiv10:%s", opts.AppID)
+	key := fmt.Sprintf("token:light:lintai:%s", opts.AppID)
 	exists := false
 	if exists, err = client.cacher.IsSet(key); err != nil {
 		return

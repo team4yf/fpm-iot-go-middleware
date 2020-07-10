@@ -19,7 +19,7 @@
     },
     
     "notify": {
-        "light-lt10": {
+        "light-lintai": {
             "devicePath": "$.imei",
             "bodyparser": "json",
             "bind": { "extra": "1" },

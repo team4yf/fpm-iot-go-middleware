@@ -2,7 +2,7 @@
 @remote = http://open.yunplus.io:19580
 @sn = 866971039105809
 @device = light
-@brand = lt10
+@brand = lintai
 @pid = 1
 @appid = ceaa191a
 

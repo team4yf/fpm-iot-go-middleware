@@ -3,7 +3,7 @@ INSERT INTO "fim_application" ("id", "created_at", "updated_at", "deleted_at", "
 
 
 INSERT INTO "fim_project" ("id", "created_at", "updated_at", "deleted_at", "app_id", "name", "status", "project_id", "code", "entry_url", "setting") VALUES
-(1,	NULL,	NULL,	NULL,	'ceaa191a',	'Demo Project',	1,	1,	'demo',	'http://open.yunplus.io:19501/demo',	'{"light":{"brand":"lt10","appid":"LT0314fbf27a4d2986"}}');
+(1,	NULL,	NULL,	NULL,	'ceaa191a',	'Demo Project',	1,	1,	'demo',	'http://open.yunplus.io:19501/demo',	'{"light":{"brand":"lintai","appid":"LT0314fbf27a4d2986"}}');
 
 
 INSERT INTO "fim_client" ("id", "created_at", "updated_at", "deleted_at", "app_key", "secret_key", "expired", "name", "api_base_url", "environment", "enable_ssl", "cert_path", "type", "status", "username", "brand") VALUES
