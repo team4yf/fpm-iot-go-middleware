@@ -68,7 +68,7 @@ func PushHandler(app *core.App) func(http.ResponseWriter, *http.Request) {
 
 			// 添加固定的静态数据，用于应用平台使用
 			bind := config.GetMapOrDefault("notify."+deviceSpecificName+".bind", nil)
-			msgPayloadDevice := msg.Device{
+			msgPayloadDevice := &msg.Device{
 				ID:      deviceID,
 				Type:    device,
 				Name:    "-",

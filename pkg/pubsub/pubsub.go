@@ -12,7 +12,7 @@ import (
 //PubSub 定义接口
 // 主要包含发布和订阅
 type PubSub interface {
-	Publish(topic string, payload interface{})
+	Publish(topic string, payload []byte)
 	Subscribe(topic string, handler func(topic, payload interface{}))
 }
 
@@ -37,7 +37,7 @@ func NewMQTTPubSub(c *config.MqttSetting) PubSub {
 }
 
 //Publish 实现Publish函数
-func (m *mqttPS) Publish(topic string, payload interface{}) {
+func (m *mqttPS) Publish(topic string, payload []byte) {
 	log.Infof("topic: %s, payload: %s", topic, payload)
 	token := m.mClient.Publish(topic, m.config.Qos, m.config.Retained, payload)
 	token.Wait()

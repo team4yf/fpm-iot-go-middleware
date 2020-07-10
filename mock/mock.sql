@@ -3,8 +3,8 @@ INSERT INTO "fim_application" ("id", "created_at", "updated_at", "deleted_at", "
 
 
 INSERT INTO "fim_project" ("id", "created_at", "updated_at", "deleted_at", "app_id", "name", "status", "project_id", "code", "entry_url", "setting") VALUES
-(1,	NULL,	NULL,	NULL,	'ceaa191a',	'Demo Project',	1,	1,	'demo',	'http://open.yunplus.io:19501/demo',	'{"light":{"brand":"lintai","appid":"LT0314fbf27a4d2986"}}');
+(1,	NULL,	NULL,	NULL,	'ceaa191a',	'Demo Project',	1,	1,	'demo',	'http://open.yunplus.io:19501/demo',	'{"light":{"brand":"lt10","appid":"LT0314fbf27a4d2986"}}');
 
 
 INSERT INTO "fim_client" ("id", "created_at", "updated_at", "deleted_at", "app_key", "secret_key", "expired", "name", "api_base_url", "environment", "enable_ssl", "cert_path", "type", "status", "username", "brand") VALUES
-(1,	NULL,	NULL,	NULL,	'LT0314fbf27a4d2986',	'1bc7b874c74623298a6',	3600,	'瓴泰科技智慧路灯 API 接口',	'http://101.132.142.5:8088/api',	'prod',	NULL,	NULL,	'light',	1,	'wang3',	'lintai');
+(1,	NULL,	NULL,	NULL,	'LT0314fbf27a4d2986',	'1bc7b874c74623298a6',	3600,	'瓴泰科技智慧路灯 API 接口',	'http://101.132.142.5:8088/api',	'prod',	NULL,	NULL,	'light',	1,	'wang3',	'lt10');

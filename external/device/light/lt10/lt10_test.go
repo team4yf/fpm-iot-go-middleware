@@ -1,4 +1,4 @@
-package lintai
+package lt10
 
 import (
 	"testing"

@@ -8,7 +8,7 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/team4yf/fpm-iot-go-middleware/external/device/light/lintai"
+	"github.com/team4yf/fpm-iot-go-middleware/external/device/light/lt10"
 	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/service"
 )
@@ -55,8 +55,8 @@ func NewAPIClient(brand, appid string) (rest.Client, error) {
 	}
 
 	switch brand {
-	case "lintai":
-		client = lintai.NewClient(clientConfigs[key], clientService.GetCache())
+	case "lt10":
+		client = lt10.NewClient(clientConfigs[key], clientService.GetCache())
 
 	default:
 		return nil, errors.New("not support brand: " + brand)

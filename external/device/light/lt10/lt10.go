@@ -1,5 +1,5 @@
-//Package lintai 瓴泰科技智慧路灯
-package lintai
+//Package lt10 瓴泰科技智慧路灯
+package lt10
 
 import (
 	"encoding/json"
@@ -47,7 +47,7 @@ type defaultClient struct {
 func refreshToken(client *defaultClient, force bool) (token string, err error) {
 
 	opts := client.options
-	key := fmt.Sprintf("token:light:lintai:%s", opts.AppID)
+	key := fmt.Sprintf("token:light:lt10:%s", opts.AppID)
 	exists := false
 	if exists, err = client.cacher.IsSet(key); err != nil {
 		return
@@ -110,7 +110,7 @@ func (cli *defaultClient) Execute(api string, body interface{}) (rsp *rest.APIRe
 	}
 
 	data, _ := json.Marshal(body)
-	log.Infof("%s", (string)(data))
+	log.Infof("Execute: %s", (string)(data))
 	opts := cli.options
 	rspWrapper := utils.PostJSONWithHeader(opts.BaseURL+apiURL[api], map[string]string{
 		"accessToken": cli.token,

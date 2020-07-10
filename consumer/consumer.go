@@ -3,18 +3,22 @@ package consumer
 
 import (
 	"strings"
+	"time"
 
 	"github.com/team4yf/fpm-iot-go-middleware/external/device/light"
+	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/core"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/message"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
 )
 
+var fpmApp *core.App
+
 //DefaultMqttConsumer the default subscriber of the mqtt mq server
 //See detail: https://shimo.im/docs/bJaoNiMc4yEfkRSt#anchor-MFbv
 func DefaultMqttConsumer(app *core.App) func(interface{}, interface{}) {
-
+	fpmApp = app
 	light.Init()
 
 	return func(topic, datastream interface{}) {
@@ -79,8 +83,29 @@ func DefaultMqttConsumer(app *core.App) func(interface{}, interface{}) {
 	}
 }
 
-func feedback() {
+func feedback(header *message.Header, payload *message.S2DPayload, rsp *rest.APIResponse, err error) {
+	log.Infof("feedbackStart")
+	var result interface{}
+	if err != nil {
+		result = err.Error
+	} else {
+		result = rsp
+	}
 
+	feedbackBody := &message.D2SFeedback{
+		MsgID:     payload.MsgID,
+		Timestamp: time.Now().Unix(),
+		Cgi:       payload.Cgi,
+		Result:    result,
+	}
+
+	feedbackMessage := &message.D2SFeedbackMessage{
+		Header:   header,
+		Feedback: feedbackBody,
+	}
+	message := utils.JSON2String(feedbackMessage)
+	log.Infof("feedback: %+v", message)
+	fpmApp.Publish("$d2s/"+header.AppID+"/partner/feedback", ([]byte)(message))
 }
 
 func controlLight(lightSetting map[string]interface{}, header *message.Header, payloads []*message.S2DPayload) {
@@ -94,8 +119,11 @@ func controlLight(lightSetting map[string]interface{}, header *message.Header, p
 	// control single deivce
 	if header.Name == "Control" {
 		payload := payloads[0]
-		cmd, args := payload.Cmd, payload.Argument
+		needFeedback, cmd, args := payload.Feedback, payload.Cmd, payload.Argument
 		rsp, err := client.Execute(cmd, args)
+		if needFeedback != 0 {
+			feedback(header, payload, rsp, err)
+		}
 		if err != nil {
 			log.Errorf("execute api control error %+v", err)
 			return

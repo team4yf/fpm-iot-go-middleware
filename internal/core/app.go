@@ -11,7 +11,6 @@ import (
 	"github.com/justinas/alice"
 	"github.com/team4yf/fpm-iot-go-middleware/config"
 	"github.com/team4yf/fpm-iot-go-middleware/errno"
-	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 
 	s "github.com/team4yf/fpm-iot-go-middleware/internal/service"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
@@ -26,7 +25,6 @@ type App struct {
 	mq         pubsub.PubSub
 	Service    s.DeviceService
 	m          alice.Chain
-	LintaiAPI  rest.Client
 }
 
 //Init init the internal component
@@ -58,7 +56,7 @@ func (app *App) Get(url string, handler func(w http.ResponseWriter, r *http.Requ
 }
 
 //Publish publish a message of the topic
-func (app *App) Publish(topic string, message interface{}) {
+func (app *App) Publish(topic string, message []byte) {
 	app.mq.Publish(topic, message)
 }
 

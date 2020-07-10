@@ -23,15 +23,23 @@ type Device struct {
 
 //D2SPayload the payload data struct
 type D2SPayload struct {
-	Device    Device      `json:"device"`
+	Device    *Device     `json:"device"`
 	Data      interface{} `json:"data"`
+	Cgi       string      `json:"cgi"`
+	Timestamp int64       `json:"timestamp"`
+}
+
+//D2SFeedback the body of the feedback message
+type D2SFeedback struct {
+	Result    interface{} `json:"result"`
+	MsgID     string      `json:"msgId"`
 	Cgi       string      `json:"cgi"`
 	Timestamp int64       `json:"timestamp"`
 }
 
 //S2DPayload the payload data struct
 type S2DPayload struct {
-	Device    Device      `json:"device"`
+	Device    *Device     `json:"device"`
 	Argument  interface{} `json:"arg"`
 	MsgID     string      `json:"msgId"`
 	NetID     string      `json:"netId"`
@@ -52,4 +60,10 @@ type S2DMessage struct {
 	Header  *Header                `json:"header"`
 	Bind    map[string]interface{} `json:"bind,omitempty"`
 	Payload []*S2DPayload          `json:"payload"`
+}
+
+//D2SFeedbackMessage feedback message
+type D2SFeedbackMessage struct {
+	Header   *Header      `json:"header"`
+	Feedback *D2SFeedback `json:"feedback"`
 }
