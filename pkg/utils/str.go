@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -62,4 +63,9 @@ func GetJsonPathData(data, jp string) (interface{}, error) {
 		return nil, err
 	}
 	return res, nil
+}
+
+func Sha256Encode(origin string) string {
+	sum := sha256.Sum256(([]byte)(origin))
+	return fmt.Sprintf("%x", sum)
 }

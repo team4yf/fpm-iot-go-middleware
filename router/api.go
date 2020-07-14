@@ -3,6 +3,7 @@ package router
 
 import (
 	"github.com/team4yf/fpm-iot-go-middleware/handler/device"
+	"github.com/team4yf/fpm-iot-go-middleware/handler/mqttuser"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/core"
 )
 
@@ -15,4 +16,9 @@ func LoadPushAPI(app *core.App) {
 //LoadDeviceAPI 设备管理相关的接口
 func LoadDeviceAPI(app *core.App) {
 	app.Post("/device/{type}/{brand}/create", device.CreateHandler(app))
+}
+
+//LoadMQTTUserAPI mqttuser管理相关的接口
+func LoadMQTTUserAPI(app *core.App) {
+	app.Post("/mqttuser/create", mqttuser.CreateHandler(app))
 }

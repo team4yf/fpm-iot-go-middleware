@@ -15,6 +15,7 @@ import (
 	s "github.com/team4yf/fpm-iot-go-middleware/internal/service"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/pubsub"
+	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
 	"github.com/team4yf/fpm-iot-go-middleware/router/middleware"
 )
 
@@ -36,6 +37,16 @@ func (app *App) Init() {
 	app.Middleware = &middleware.Middleware{}
 	app.m = alice.New(app.Middleware.LoggerMiddleware, app.Middleware.RecoverMiddleware)
 
+}
+
+//ParseBody parse body to struct
+func (app *App) ParseBody(r *http.Request, data interface{}) (err error) {
+	err = utils.GetBodyStruct(r.Body, &data)
+
+	if err != nil {
+		return
+	}
+	return
 }
 
 //Run startup the app
@@ -90,6 +101,7 @@ func (app *App) Fail(w http.ResponseWriter, result string) {
 //FailWithError return error but the http:200
 func (app *App) FailWithError(w http.ResponseWriter, err error) {
 	e := errno.NewsWithError(err)
+	log.Errorf("error:%v", err)
 	app.SendError(w, e)
 }
 

@@ -1,0 +1,17 @@
+@host = http://localhost:9000
+@remote = http://open.yunplus.io:19580
+
+@appid = ceaa191a
+
+
+### 注册一个新的mqtt用户
+POST {{host}}/mqttuser/create
+Content-Type: application/json
+
+{
+    "isSuperuser": true,
+    "username": "emqx",
+    "salt": "123123",
+    "appid":"{{appid}}",
+    "password":"public"
+}

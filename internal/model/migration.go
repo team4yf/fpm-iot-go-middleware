@@ -11,7 +11,14 @@ func (migration *Migration) Install() error {
 		&Client{},
 		&Application{},
 		&Project{},
+		&MQTTUser{},
 	}
 	Db.AutoMigrate(tables...)
+	mock()
+	return nil
+}
+
+//TODO: mock some data
+func mock() error {
 	return nil
 }

@@ -14,6 +14,7 @@ require (
 	github.com/lestrrat-go/file-rotatelogs v2.3.0+incompatible
 	github.com/lestrrat-go/strftime v1.0.1 // indirect
 	github.com/lib/pq v1.7.0 // indirect
+	github.com/magiconair/properties v1.8.1
 	github.com/mattn/go-sqlite3 v2.0.1+incompatible // indirect
 	github.com/oliveagle/jsonpath v0.0.0-20180606110733-2e52cf6e6852
 	github.com/pkg/errors v0.9.1

@@ -19,6 +19,8 @@ https://github.com/team4yf/fpm-iot-cloud-middleware
 
 2. 从应用推送的控制指令,也通过相应的方式转换到对应的数据通信方式给到设备平台.
 
+3. 支持 mqtt 创建客户端用户，存储在 pg 数据库中，参考文档： [https://docs.emqx.io/broker/latest/cn/advanced/auth-postgresql.html](https://docs.emqx.io/broker/latest/cn/advanced/auth-postgresql.html)
+
 
 目前主要的接入目标:
 

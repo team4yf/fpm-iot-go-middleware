@@ -32,6 +32,7 @@ func main() {
 
 	router.LoadPushAPI(app)
 	router.LoadDeviceAPI(app)
+	router.LoadMQTTUserAPI(app)
 
 	app.Subscribe("$s2d/+/+/send", consumer.DefaultMqttConsumer(app))
 
