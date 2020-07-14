@@ -24,6 +24,7 @@ func CreateHandler(app *core.App) func(http.ResponseWriter, *http.Request) {
 			return
 		}
 		req.Salt = utils.GenShortID()
+		req.Status = 0
 		req.Password = utils.Sha256Encode(req.Password) + req.Salt
 		err = mqttUserRep.Create(&req)
 		if err != nil {
