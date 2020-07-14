@@ -10,8 +10,7 @@ Content-Type: application/json
 
 {
     "isSuperuser": true,
-    "username": "emqx",
-    "salt": "123123",
+    "username": "fpmuser",
     "appid":"{{appid}}",
-    "password":"public"
+    "password":"fpmpassword"
 }

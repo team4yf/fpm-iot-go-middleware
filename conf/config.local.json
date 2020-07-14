@@ -11,8 +11,8 @@
     "mqttserver":{
         "host": "mqtt.yunplus.io",
         "port": 1883,
-        "username": "admin",
-        "password": "123123123",
+        "username": "fpmuser",
+        "password": "fpmpassword",
         "qos": 0,
         "retain": false,
         "clientid": "fpmiot"
