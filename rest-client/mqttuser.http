@@ -14,3 +14,15 @@ Content-Type: application/json
     "appid":"{{appid}}",
     "password":"fpmpassword"
 }
+
+
+### 注册一个新的生产mqtt用户
+POST http://open.yunplus.io:19580/mqttuser/create
+Content-Type: application/json
+
+{
+    "isSuperuser": true,
+    "username": "fpmuser2",
+    "appid":"{{appid}}",
+    "password":"fpmpassword2"
+}
