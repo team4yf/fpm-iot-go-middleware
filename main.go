@@ -36,6 +36,8 @@ func main() {
 
 	app.Subscribe("$s2d/+/+/send", consumer.DefaultMqttConsumer(app))
 
+	app.Subscribe("$d2s/+/mcu20/push", consumer.DevicePushConsumer(app))
+
 	socketPort := config.GetConfigOrDefault("socket.port", 5001)
 	app.GenTCPReceiver(socketPort.(int))
 	app.Run(fmt.Sprintf("%v:%v",
