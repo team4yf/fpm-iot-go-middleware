@@ -5,16 +5,20 @@ package core
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/justinas/alice"
 	"github.com/team4yf/fpm-iot-go-middleware/config"
 	"github.com/team4yf/fpm-iot-go-middleware/errno"
 
+	msg "github.com/team4yf/fpm-iot-go-middleware/internal/message"
 	s "github.com/team4yf/fpm-iot-go-middleware/internal/service"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/pubsub"
+	"github.com/team4yf/fpm-iot-go-middleware/pkg/tcp"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
 	"github.com/team4yf/fpm-iot-go-middleware/router/middleware"
 )
@@ -69,6 +73,65 @@ func (app *App) Get(url string, handler func(w http.ResponseWriter, r *http.Requ
 //Publish publish a message of the topic
 func (app *App) Publish(topic string, message []byte) {
 	app.mq.Publish(topic, message)
+}
+
+//GenTCPReceiver create a tcp receiver
+func (app *App) GenTCPReceiver(port int) {
+	netRecever := tcp.NewNetReceiver(func(topic string, buf []byte) {
+		if topic == "#socket/ee" {
+			// 来自环境传感器的数据
+			data := make(map[string]interface{}, 0)
+			if err := utils.StringToStruct(string(buf), &data); err != nil {
+				fmt.Println(err)
+				return
+			}
+			//TODO: publish to the mqtt
+			fmt.Printf("%+v\n", data)
+			deviceID := data["sn_id"].(string)
+			// 通过设备和id获取到具体对应的项目信息，如果设备不存在或者设备状态不对的话，会抛出异常信息
+			uuid, projid, err := app.Service.Receive("ENV", "Rich", "push", deviceID)
+			if err != nil {
+				log.Errorf("Device Not Exists Or Not Actived: %v", err)
+				return
+			}
+
+			msgHeader := &msg.Header{
+				Version:   10,
+				NameSpace: "FPM.Lamp." + "Env",
+				Name:      "push",
+				AppID:     uuid,
+				ProjID:    projid,
+				Source:    "HTTP",
+			}
+
+			// 添加固定的静态数据，用于应用平台使用
+			msgPayloadDevice := &msg.Device{
+				ID:      deviceID,
+				Type:    "ENV",
+				Name:    "-",
+				Brand:   "Rich",
+				Version: "v10",
+				Extra:   nil,
+			}
+
+			msgPayload := &msg.D2SPayload{
+				Device:    msgPayloadDevice,
+				Data:      data,
+				Cgi:       deviceID,
+				Timestamp: time.Now().Unix(),
+			}
+
+			msg := msg.D2SMessage{
+				Header:  msgHeader,
+				Payload: msgPayload,
+			}
+
+			j, _ := json.Marshal(msg)
+
+			app.Publish(fmt.Sprintf("$d2s/%s/partner/push", uuid), j)
+		}
+	})
+	netRecever.Read(port)
 }
 
 //Subscribe subscribe the topic

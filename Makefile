@@ -20,7 +20,10 @@ build:
 build-prod:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -tags prod -o $(GOBIN)/app ./main.go
 sub:
-	mosquitto_sub -h www.ruichen.top -t "^push/$(uuid)/event" -u "admin" -P "123123123"
+	mosquitto_sub -h open.yunplus.io -t "^push/$(uuid)/event" -u "admin" -P "123123123"
+
+pub:
+	mosquitto_pub -h open.yunplus.io -t "$d2s/aa/mcu20/push" -u "fpmuser" -P "fpmpassword" -m "test"
 
 docker-build:
 	docker build --tag fpm-iot-middleware:v2.0 --tag yfsoftcom/fpm-iot-middleware:v2.0 .

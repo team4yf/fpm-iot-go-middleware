@@ -131,3 +131,12 @@ func controlLight(lightSetting map[string]interface{}, header *message.Header, p
 		log.Infof("Payload:%+v Response: %+v", payload, rsp)
 	}
 }
+
+//DevicePushConsumer the device push consumer
+func DevicePushConsumer(app *core.App) func(interface{}, interface{}) {
+	fpmApp = app
+	return func(topic, datastream interface{}) {
+		str := (string)(datastream.([]byte))
+		log.Debugf("topic: %v, datastream: %v", topic, str)
+	}
+}
