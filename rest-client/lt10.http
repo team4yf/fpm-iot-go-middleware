@@ -2,11 +2,11 @@
 
 @appkey=LT0314fbf27a4d2986
 @appsec=1bc7b874c74623298a6
-@imei=866971039105809
+@imei=866971036963473
 
 @baseUrl=http://101.132.142.5:8088/api
 
-@token=eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1OTQ3Mjk3MzcsInVzZXJJZCI6Mjk4LCJpYXQiOjE1OTM0MzM3MzcsImp0aSI6IkxUMDMxNGZiZjI3YTRkMjk4NiJ9.-wyFSxB-njX6ZdtsZ3zXxk6CvpMQf9FN6UbpfO7DO5E
+@token=eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1OTgzMzU4MjYsInVzZXJJZCI6Mjk4LCJpYXQiOjE1OTcwMzk4MjYsImp0aSI6IkxUMDMxNGZiZjI3YTRkMjk4NiJ9.MmP_QjuHipb9ApQXxk8NMyRPRqxj0M9q2F19aRH8Gb0
 ### /auth/getAccessToken
 GET {{baseUrl}}/auth/getAccessToken
 Content-Type: application/json
