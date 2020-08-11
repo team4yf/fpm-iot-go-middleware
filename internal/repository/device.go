@@ -9,6 +9,7 @@ import (
 type DeviceRepo interface {
 	Create(*m.Device) error
 	Get(string) (*m.Device, error)
+	Check(string) (bool, error)
 }
 type deviceRepo struct {
 	db *gorm.DB
@@ -37,4 +38,15 @@ func (r *deviceRepo) Get(sn string) (*m.Device, error) {
 	}
 
 	return entity, nil
+}
+
+func (r *deviceRepo) Check(sn string) (exists bool, err error) {
+	entity := &m.Device{}
+	count := 0
+	err = r.db.Model(entity).Where("sn = ? and status=1 ", sn).Count(&count).Error
+	if err != nil {
+		return
+	}
+	exists = count > 0
+	return
 }

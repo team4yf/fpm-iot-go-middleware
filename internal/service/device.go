@@ -62,6 +62,14 @@ func NewSimpleDeviceService() DeviceService {
 
 //RegisterDevice insert the device into the db
 func (s *SimpleDeviceService) RegisterDevice(device *m.Device) (err error) {
+	//get the device, return if exists
+	exists, err := s.deviceRepo.Check(device.SN)
+	if err != nil {
+		return
+	}
+	if exists {
+		return
+	}
 	return s.deviceRepo.Create(device)
 }
 
