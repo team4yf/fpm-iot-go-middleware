@@ -1,13 +1,13 @@
 @host = http://localhost:9000
 @remote = http://open.yunplus.io:19580
-@sn = 866971039105809
+@sn = 860705049581658
 @device = light
 @brand = lt10
 @pid = 1
 @appid = ceaa191a
 
  ### 发送一个心跳包
-POST {{host}}/push/{{device}}/{{brand}}/beat
+POST {{remote}}/push/{{device}}/{{brand}}/beat
 Content-Type: application/json
 
 {"lightingStatus":"1","recordtime":"2020-06-29 17:41:14","brightness":"20","imei":"{{sn}}","electricity":"45.5","voltage":"235.7"}
@@ -17,7 +17,7 @@ Content-Type: application/json
 POST {{remote}}/push/{{device}}/{{brand}}/alarm
 Content-Type: application/json
 
-{"alarmType":"0","recordTime":"2020-08-11 18:03:56","imei":"860705049581658"}
+{"alarmType":"0","recordTime":"2020-08-11 18:03:56","imei":"{{sn}}"}
 
 ### 注册一个设备
 POST {{host}}/device/{{device}}/{{brand}}/create
