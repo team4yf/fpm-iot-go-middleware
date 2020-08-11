@@ -12,6 +12,13 @@ Content-Type: application/json
 
 {"lightingStatus":"1","recordtime":"2020-06-29 17:41:14","brightness":"20","imei":"{{sn}}","electricity":"45.5","voltage":"235.7"}
 
+
+### 发送一个离线消息
+POST {{remote}}/push/{{device}}/{{brand}}/alarm
+Content-Type: application/json
+
+{"alarmType":"0","recordTime":"2020-08-11 18:03:56","imei":"860705049581658"}
+
 ### 注册一个设备
 POST {{host}}/device/{{device}}/{{brand}}/create
 Content-Type: application/json
