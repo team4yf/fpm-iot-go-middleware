@@ -49,13 +49,30 @@ Content-Type: application/json
   ]
 }
 
+### /lightControl/setLocalStrategy
+POST {{baseUrl}}/lightControl/setLocalStrategy
+accessToken: {{token}}
+Content-Type: application/json
+
+{
+  "commandList": [
+    {
+      "commandType": "CLEAN"
+    }
+  ],
+  "imeiList": [
+    {
+      "imei": "{{imei}}"
+    }
+  ]
+}
 ### /lightControl/batchUpdateFrequency, frequency单位是s
 POST {{baseUrl}}/lightControl/batchUpdateFrequency
 accessToken: {{token}}
 Content-Type: application/json
 
 {
-  "frequency": 120,
+  "frequency": 600,
   "imeiList": [
     "{{imei}}"
   ],
