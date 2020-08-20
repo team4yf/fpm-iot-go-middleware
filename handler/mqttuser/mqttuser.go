@@ -4,7 +4,6 @@ package mqttuser
 import (
 	"net/http"
 
-	"github.com/team4yf/fpm-iot-go-middleware/internal/core"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/repository"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
@@ -13,7 +12,7 @@ import (
 var mqttUserRep repository.MQTTUserRepo
 
 //CreateHandler create a new mqtt user
-func CreateHandler(app *core.App) func(http.ResponseWriter, *http.Request) {
+func CreateHandler(app *fpm.Fpm) func(http.ResponseWriter, *http.Request) {
 	mqttUserRep = repository.NewMQTTUserRepo()
 
 	return func(w http.ResponseWriter, r *http.Request) {

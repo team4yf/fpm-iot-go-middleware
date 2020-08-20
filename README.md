@@ -89,3 +89,60 @@ JSON数据格式
 - router: 路由信息
   - middleware: 中间件
 - scripts: 常用的脚本
+
+
+
+```golang
+if topic == "#socket/ee" {
+			// 来自环境传感器的数据
+			data := make(map[string]interface{}, 0)
+			if err := utils.StringToStruct(string(buf), &data); err != nil {
+				fmt.Println(err)
+				return
+			}
+			//TODO: publish to the mqtt
+			fmt.Printf("%+v\n", data)
+			deviceID := data["sn_id"].(string)
+			// 通过设备和id获取到具体对应的项目信息，如果设备不存在或者设备状态不对的话，会抛出异常信息
+			uuid, projid, err := app.Service.Receive("ENV", "Rich", "push", deviceID)
+			if err != nil {
+				log.Errorf("Device Not Exists Or Not Actived: %v", err)
+				return
+			}
+
+			msgHeader := &msg.Header{
+				Version:   10,
+				NameSpace: "FPM.Lamp." + "Env",
+				Name:      "push",
+				AppID:     uuid,
+				ProjID:    projid,
+				Source:    "HTTP",
+			}
+
+			// 添加固定的静态数据，用于应用平台使用
+			msgPayloadDevice := &msg.Device{
+				ID:      deviceID,
+				Type:    "ENV",
+				Name:    "-",
+				Brand:   "Rich",
+				Version: "v10",
+				Extra:   nil,
+			}
+
+			msgPayload := &msg.D2SPayload{
+				Device:    msgPayloadDevice,
+				Data:      data,
+				Cgi:       deviceID,
+				Timestamp: time.Now().Unix(),
+			}
+
+			msg := msg.D2SMessage{
+				Header:  msgHeader,
+				Payload: msgPayload,
+			}
+
+			j, _ := json.Marshal(msg)
+
+			app.Publish(fmt.Sprintf("$d2s/%s/partner/push", uuid), j)
+    }
+```

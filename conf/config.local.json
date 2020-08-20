@@ -4,18 +4,12 @@
         "cert": "ssl/certificate.pem",
         "port": 18443
     },
-    "server": {
-        "host": "0.0.0.0",
-        "port": 9000
-    },
-    "mqttserver":{
-        "host": "mqtt.yunplus.io",
-        "port": 1883,
-        "username": "fpmuser2",
-        "password": "fpmpassword2",
+    "mqtt":{
+        "host": "mqtt.yunplus.io:1883",
+        "user": "fpmuser2",
+        "pass": "fpmpassword2",
         "qos": 0,
-        "retain": false,
-        "clientid": "fpmiot"
+        "retain": false
     },
     
     "notify": {

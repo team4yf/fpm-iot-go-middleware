@@ -1,14 +1,12 @@
 package main
 
 import (
-	"fmt"
-
+	_ "github.com/team4yf/fpm-go-plugin-mqtt-client/plugin"
 	"github.com/team4yf/fpm-iot-go-middleware/config"
-	"github.com/team4yf/fpm-iot-go-middleware/consumer"
-	"github.com/team4yf/fpm-iot-go-middleware/internal/core"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/pool"
 	"github.com/team4yf/fpm-iot-go-middleware/router"
+	"github.com/team4yf/yf-fpm-server-go/fpm"
 )
 
 func init() {
@@ -18,28 +16,28 @@ func init() {
 var migration model.Migration
 
 func main() {
-	config.Init("")
-	// Init the model
-	model.CreateDb()
-	migration.Install()
+	app := fpm.New()
 
-	// Init the redis pool
-	pool.InitRedis(config.RedisConfig)
+	app.AddHook("BEFORE_INIT", func(f *fpm.Fpm) {
+		config.Init("")
+		// Init the model
+		model.CreateDb()
+		migration.Install()
 
-	app := &core.App{}
+		// Init the redis pool
+		pool.InitRedis(config.RedisConfig)
+	}, 10)
+
+	app.AddHook("AFTER_INIT", func(f *fpm.Fpm) {
+		router.LoadPushAPI(app)
+		router.LoadDeviceAPI(app)
+		router.LoadMQTTUserAPI(app)
+	}, 10)
 
 	app.Init()
+	// app.Subscribe("$s2d/+/+/send", consumer.DefaultMqttConsumer(app))
 
-	router.LoadPushAPI(app)
-	router.LoadDeviceAPI(app)
-	router.LoadMQTTUserAPI(app)
+	// app.Subscribe("$d2s/+/mcu20/push", consumer.DevicePushConsumer(app))
 
-	app.Subscribe("$s2d/+/+/send", consumer.DefaultMqttConsumer(app))
-
-	app.Subscribe("$d2s/+/mcu20/push", consumer.DevicePushConsumer(app))
-
-	socketPort := config.GetConfigOrDefault("socket.port", 5001)
-	app.GenTCPReceiver(socketPort.(int))
-	app.Run(fmt.Sprintf("%v:%v",
-		config.GetConfigOrDefault("server.host", "0.0.0.0"), config.GetConfigOrDefault("server.port", "9000")))
+	app.Run()
 }

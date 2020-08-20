@@ -3,22 +3,22 @@ package router
 
 import (
 	"github.com/team4yf/fpm-iot-go-middleware/handler/device"
-	"github.com/team4yf/fpm-iot-go-middleware/handler/mqttuser"
-	"github.com/team4yf/fpm-iot-go-middleware/internal/core"
+	"github.com/team4yf/yf-fpm-server-go/fpm"
 )
 
 //LoadPushAPI 第三方设备平台推送过来的设备信息
-func LoadPushAPI(app *core.App) {
-	app.Post("/push/{device}/{brand}/{event}", device.PushHandler(app))
-
+func LoadPushAPI(fpmApp *fpm.Fpm) {
+	device.Init()
+	fpmApp.BindHandler("/push/{device}/{brand}/{event}", device.PushHandler()).Methods("POST")
 }
 
 //LoadDeviceAPI 设备管理相关的接口
-func LoadDeviceAPI(app *core.App) {
-	app.Post("/device/{type}/{brand}/create", device.CreateHandler(app))
+func LoadDeviceAPI(fpmApp *fpm.Fpm) {
+	device.Init()
+	fpmApp.BindHandler("/device/{type}/{brand}/create", device.CreateHandler()).Methods("POST")
 }
 
 //LoadMQTTUserAPI mqttuser管理相关的接口
-func LoadMQTTUserAPI(app *core.App) {
-	app.Post("/mqttuser/create", mqttuser.CreateHandler(app))
+func LoadMQTTUserAPI(fpmApp *fpm.Fpm) {
+	// app.Post("/mqttuser/create", mqttuser.CreateHandler(app))
 }

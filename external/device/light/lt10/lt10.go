@@ -9,7 +9,6 @@ import (
 
 	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/cache"
-	"github.com/team4yf/fpm-iot-go-middleware/pkg/log"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
 )
 
@@ -110,7 +109,7 @@ func (cli *defaultClient) Execute(api string, body interface{}) (rsp *rest.APIRe
 	}
 
 	data, _ := json.Marshal(body)
-	log.Infof("Execute: %s", (string)(data))
+	// log.Infof("Execute: %s", (string)(data))
 	opts := cli.options
 	rspWrapper := utils.PostJSONWithHeader(opts.BaseURL+apiURL[api], map[string]string{
 		"accessToken": cli.token,
