@@ -19,6 +19,7 @@ var deviceService service.DeviceService
 var mux sync.Mutex
 var isInited bool
 
+//Init some init work here
 func Init() {
 	mux.Lock()
 	defer mux.Unlock()

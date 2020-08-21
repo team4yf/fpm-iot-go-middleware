@@ -2,24 +2,24 @@
 package mqttuser
 
 import (
-	"net/http"
-
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/repository"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
+	"github.com/team4yf/yf-fpm-server-go/ctx"
+	"github.com/team4yf/yf-fpm-server-go/fpm"
 )
 
 var mqttUserRep repository.MQTTUserRepo
 
 //CreateHandler create a new mqtt user
-func CreateHandler(app *fpm.Fpm) func(http.ResponseWriter, *http.Request) {
+func CreateHandler() func(*ctx.Ctx, *fpm.Fpm) {
 	mqttUserRep = repository.NewMQTTUserRepo()
 
-	return func(w http.ResponseWriter, r *http.Request) {
+	return func(c *ctx.Ctx, fpmApp *fpm.Fpm) {
 		var req model.MQTTUser
-		err := app.ParseBody(r, &req)
+		err := c.ParseBody(&req)
 		if err != nil {
-			app.FailWithError(w, err)
+			c.Fail(err)
 			return
 		}
 		req.Salt = utils.GenShortID()
@@ -27,11 +27,11 @@ func CreateHandler(app *fpm.Fpm) func(http.ResponseWriter, *http.Request) {
 		req.Password = utils.Sha256Encode(req.Password + req.Salt)
 		err = mqttUserRep.Create(&req)
 		if err != nil {
-			app.FailWithError(w, err)
+			c.Fail(err)
 			return
 		}
 
-		app.SendOk(w, req)
+		c.JSON(req)
 	}
 
 }

@@ -3,6 +3,7 @@ package service
 import (
 	"errors"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -21,6 +22,8 @@ const (
 
 var (
 	DEVICE_NOT_EXISTS = errors.New("not exists device")
+	instance          DeviceService
+	mux               sync.Mutex
 )
 
 type cachedDevice struct {
@@ -49,6 +52,11 @@ type SimpleDeviceService struct {
 
 //NewSimpleDeviceService create a new service
 func NewSimpleDeviceService() DeviceService {
+	mux.Lock()
+	defer mux.Unlock()
+	if instance != nil {
+		return instance
+	}
 	rdsClient, _ := pool.Get("redis")
 	service := &SimpleDeviceService{
 		cache:           rds.NewRedisCache(config.AppName, rdsClient.(*redis.Client)),
@@ -57,6 +65,7 @@ func NewSimpleDeviceService() DeviceService {
 		projectRepo:     repo.NewProjectRepo(),
 		clientRepo:      repo.NewClientRepo(),
 	}
+	instance = service
 	return service
 }
 

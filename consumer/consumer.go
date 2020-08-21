@@ -8,6 +8,7 @@ import (
 	"github.com/team4yf/fpm-iot-go-middleware/external/device/light"
 	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/message"
+	"github.com/team4yf/fpm-iot-go-middleware/internal/service"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
 	"github.com/team4yf/yf-fpm-server-go/fpm"
 )
@@ -16,7 +17,7 @@ import (
 //See detail: https://shimo.im/docs/bJaoNiMc4yEfkRSt#anchor-MFbv
 func DefaultMqttConsumer(fpmApp *fpm.Fpm) func(interface{}, interface{}) {
 	light.Init()
-
+	deviceService := service.NewSimpleDeviceService()
 	return func(topic, datastream interface{}) {
 		str := (string)(datastream.([]byte))
 		fpmApp.Logger.Debugf("received: %s", str)
@@ -58,7 +59,7 @@ func DefaultMqttConsumer(fpmApp *fpm.Fpm) func(interface{}, interface{}) {
 
 		appID, projID := header.AppID, header.ProjID
 		fpmApp.Logger.Debugf("the appID %s, the projID %d", appID, projID)
-		setting, err := app.Service.GetSetting(appID, projID)
+		setting, err := deviceService.GetSetting(appID, projID)
 		if err != nil {
 			fpmApp.Logger.Errorf("Get setting of the appID %s, projID %d error: %v", appID, projID, err)
 			return
@@ -102,7 +103,11 @@ func feedback(header *message.Header, payload *message.S2DPayload, rsp *rest.API
 	}
 	message := utils.JSON2String(feedbackMessage)
 	fpmApp.Logger.Infof("feedback: %+v", message)
-	fpmApp.Publish("$d2s/"+header.AppID+"/partner/feedback", ([]byte)(message))
+
+	fpmApp.Execute("mqttclient.publish", &fpm.BizParam{
+		"topic":   "$d2s/" + header.AppID + "/partner/feedback",
+		"payload": ([]byte)(message),
+	})
 }
 
 func controlLight(lightSetting map[string]interface{}, header *message.Header, payloads []*message.S2DPayload) {
