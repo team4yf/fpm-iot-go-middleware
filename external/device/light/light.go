@@ -11,6 +11,7 @@ import (
 	"github.com/team4yf/fpm-iot-go-middleware/external/device/light/lt10"
 	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/service"
+	"github.com/team4yf/yf-fpm-server-go/fpm"
 )
 
 var (
@@ -22,7 +23,12 @@ var (
 
 //Init load the configs of the clients
 func Init() error {
-	clientService = service.NewSimpleClientService()
+	app := fpm.Default()
+	c, exists := app.GetCacher()
+	if !exists {
+		return errors.New(`Cacher Not Inited!`)
+	}
+	clientService = service.NewSimpleClientService(c)
 	clients, err := clientService.ListByCondition("type = ? and status = 1", "light")
 	if err != nil {
 		return err
@@ -54,9 +60,14 @@ func NewAPIClient(brand, appid string) (rest.Client, error) {
 		return client, nil
 	}
 
+	app := fpm.Default()
+	c, exists := app.GetCacher()
+	if !exists {
+		return nil, errors.New(`Cacher Not Inited!`)
+	}
 	switch brand {
 	case "lt10":
-		client = lt10.NewClient(clientConfigs[key], clientService.GetCache())
+		client = lt10.NewClient(clientConfigs[key], c)
 
 	default:
 		return nil, errors.New("not support brand: " + brand)

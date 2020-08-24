@@ -6,12 +6,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/go-redis/redis/v8"
-	"github.com/team4yf/fpm-iot-go-middleware/config"
 	repo "github.com/team4yf/fpm-iot-go-middleware/internal/repository"
-	"github.com/team4yf/fpm-iot-go-middleware/pkg/cache"
-	"github.com/team4yf/fpm-iot-go-middleware/pkg/cache/rds"
-	"github.com/team4yf/fpm-iot-go-middleware/pkg/pool"
+	"github.com/team4yf/yf-fpm-server-go/pkg/cache"
 
 	m "github.com/team4yf/fpm-iot-go-middleware/internal/model"
 )
@@ -51,15 +47,14 @@ type SimpleDeviceService struct {
 }
 
 //NewSimpleDeviceService create a new service
-func NewSimpleDeviceService() DeviceService {
+func NewSimpleDeviceService(c cache.Cache) DeviceService {
 	mux.Lock()
 	defer mux.Unlock()
 	if instance != nil {
 		return instance
 	}
-	rdsClient, _ := pool.Get("redis")
 	service := &SimpleDeviceService{
-		cache:           rds.NewRedisCache(config.AppName, rdsClient.(*redis.Client)),
+		cache:           c,
 		applicationRepo: repo.NewApplictionRepo(),
 		deviceRepo:      repo.NewDeviceRepo(),
 		projectRepo:     repo.NewProjectRepo(),

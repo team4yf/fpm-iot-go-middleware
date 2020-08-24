@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"strings"
 
+	_ "github.com/team4yf/fpm-go-plugin-cache-redis/plugin"
 	_ "github.com/team4yf/fpm-go-plugin-mqtt-client/plugin"
 	_ "github.com/team4yf/fpm-go-plugin-tcp/plugin"
 	"github.com/team4yf/fpm-iot-go-middleware/config"
 	"github.com/team4yf/fpm-iot-go-middleware/consumer"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
-	"github.com/team4yf/fpm-iot-go-middleware/pkg/pool"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
 	"github.com/team4yf/fpm-iot-go-middleware/router"
 	"github.com/team4yf/yf-fpm-server-go/fpm"
@@ -29,9 +29,6 @@ func main() {
 		// Init the model
 		model.CreateDb()
 		migration.Install()
-
-		// Init the redis pool
-		pool.InitRedis(config.RedisConfig)
 	}, 10)
 
 	app.AddHook("AFTER_INIT", func(f *fpm.Fpm) {

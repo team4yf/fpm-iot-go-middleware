@@ -17,7 +17,8 @@ import (
 //See detail: https://shimo.im/docs/bJaoNiMc4yEfkRSt#anchor-MFbv
 func DefaultMqttConsumer(fpmApp *fpm.Fpm) func(interface{}, interface{}) {
 	light.Init()
-	deviceService := service.NewSimpleDeviceService()
+	c, _ := fpmApp.GetCacher()
+	deviceService := service.NewSimpleDeviceService(c)
 	return func(topic, datastream interface{}) {
 		str := (string)(datastream.([]byte))
 		fpmApp.Logger.Debugf("received: %s", str)

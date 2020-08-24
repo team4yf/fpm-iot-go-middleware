@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
-	"github.com/team4yf/fpm-iot-go-middleware/pkg/cache"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
+	"github.com/team4yf/yf-fpm-server-go/pkg/cache"
 )
 
 //DeviceType 设备类型，1：回路  2：控制器  默认为1
