@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	_ "github.com/team4yf/fpm-go-plugin-mqtt-client/plugin"
+	_ "github.com/team4yf/fpm-go-plugin-tcp/plugin"
 	"github.com/team4yf/fpm-iot-go-middleware/config"
 	"github.com/team4yf/fpm-iot-go-middleware/consumer"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
