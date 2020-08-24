@@ -41,11 +41,7 @@ func main() {
 
 	//执行订阅的函数
 	app.Execute("mqttclient.subscribe", &fpm.BizParam{
-		"topics": "$s2d/+/+/send",
-	})
-	//执行订阅的函数
-	app.Execute("mqttclient.subscribe", &fpm.BizParam{
-		"topics": "$d2s/+/mcu20/push",
+		"topics": []string{"$s2d/+/+/send", "$d2s/+/mcu20/push"},
 	})
 
 	mqttHandler := consumer.DefaultMqttConsumer(app)
