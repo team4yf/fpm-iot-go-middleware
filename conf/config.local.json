@@ -9,6 +9,7 @@
         "user": "fpmuser2",
         "pass": "fpmpassword2",
         "qos": 0,
+        "clientID": "go-middle-",
         "retain": false
     },
     

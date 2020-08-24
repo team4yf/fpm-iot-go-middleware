@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 
 	_ "github.com/team4yf/fpm-go-plugin-mqtt-client/plugin"
@@ -9,6 +10,7 @@ import (
 	"github.com/team4yf/fpm-iot-go-middleware/consumer"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/pool"
+	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
 	"github.com/team4yf/fpm-iot-go-middleware/router"
 	"github.com/team4yf/yf-fpm-server-go/fpm"
 )
@@ -42,11 +44,7 @@ func main() {
 
 	//执行订阅的函数
 	app.Execute("mqttclient.subscribe", &fpm.BizParam{
-		"topics": "$s2d/+/+/send",
-	})
-	//执行订阅的函数
-	app.Execute("mqttclient.subscribe", &fpm.BizParam{
-		"topics": "$d2s/+/mcu20/push",
+		"topics": []string{"$s2d/+/+/send", "$d2s/+/mcu20/push"},
 	})
 
 	mqttHandler := consumer.DefaultMqttConsumer(app)
@@ -61,6 +59,16 @@ func main() {
 		case strings.HasSuffix(topic, "mcu20/push"):
 			mcuHandler(topic, body["payload"])
 		}
+	})
+
+	app.Subscribe("#tcp/receive", func(_ string, data interface{}) {
+		body := data.(map[string]interface{})
+		app.Logger.Debugf("data: %X", body["data"])
+		body["data"] = fmt.Sprintf("%x", body["data"])
+		app.Execute("mqttclient.publish", &fpm.BizParam{
+			"topic":   `$d2s/tcp`,
+			"payload": ([]byte)(utils.JSON2String(body)),
+		})
 	})
 
 	app.Run()
