@@ -6,8 +6,8 @@ import (
 
 	_ "github.com/team4yf/fpm-go-plugin-cache-redis/plugin"
 	_ "github.com/team4yf/fpm-go-plugin-mqtt-client/plugin"
+	_ "github.com/team4yf/fpm-go-plugin-orm/plugins/pg"
 	_ "github.com/team4yf/fpm-go-plugin-tcp/plugin"
-	"github.com/team4yf/fpm-iot-go-middleware/config"
 	"github.com/team4yf/fpm-iot-go-middleware/consumer"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
@@ -19,16 +19,19 @@ func init() {
 
 }
 
-var migration model.Migration
+// var migration model.Migration
 
 func main() {
 	app := fpm.New()
 
 	app.AddHook("BEFORE_INIT", func(f *fpm.Fpm) {
-		config.Init("")
 		// Init the model
-		model.CreateDb()
-		migration.Install()
+		// model.CreateDb()
+		dbclient, _ := app.GetDatabase("pg")
+		migrator := &model.Migration{
+			DS: dbclient,
+		}
+		migrator.Install()
 	}, 10)
 
 	app.AddHook("AFTER_INIT", func(f *fpm.Fpm) {

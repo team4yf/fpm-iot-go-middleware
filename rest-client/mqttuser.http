@@ -10,9 +10,9 @@ Content-Type: application/json
 
 {
     "isSuperuser": true,
-    "username": "fpmuser3",
+    "username": "fpmuser4",
     "appid":"{{appid}}",
-    "password":"fpmpassword3"
+    "password":"fpmpassword4"
 }
 
 

@@ -28,7 +28,7 @@ func Init() error {
 	if !exists {
 		return errors.New(`Cacher Not Inited!`)
 	}
-	clientService = service.NewSimpleClientService(c)
+	clientService = service.NewSimpleClientService(fpm.Default(), c)
 	clients, err := clientService.ListByCondition("type = ? and status = 1", "light")
 	if err != nil {
 		return err

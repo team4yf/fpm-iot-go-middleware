@@ -6,7 +6,8 @@ import (
 	"sync"
 	"time"
 
-	repo "github.com/team4yf/fpm-iot-go-middleware/internal/repository"
+	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
+	"github.com/team4yf/yf-fpm-server-go/fpm"
 	"github.com/team4yf/yf-fpm-server-go/pkg/cache"
 
 	m "github.com/team4yf/fpm-iot-go-middleware/internal/model"
@@ -39,11 +40,7 @@ type DeviceService interface {
 
 //SimpleDeviceService the service object todo implement the interface
 type SimpleDeviceService struct {
-	cache           cache.Cache
-	applicationRepo repo.ApplictionRepo
-	deviceRepo      repo.DeviceRepo
-	projectRepo     repo.ProjectRepo
-	clientRepo      repo.ClientRepo
+	cache cache.Cache
 }
 
 //NewSimpleDeviceService create a new service
@@ -54,11 +51,7 @@ func NewSimpleDeviceService(c cache.Cache) DeviceService {
 		return instance
 	}
 	service := &SimpleDeviceService{
-		cache:           c,
-		applicationRepo: repo.NewApplictionRepo(),
-		deviceRepo:      repo.NewDeviceRepo(),
-		projectRepo:     repo.NewProjectRepo(),
-		clientRepo:      repo.NewClientRepo(),
+		cache: c,
 	}
 	instance = service
 	return service
@@ -67,19 +60,24 @@ func NewSimpleDeviceService(c cache.Cache) DeviceService {
 //RegisterDevice insert the device into the db
 func (s *SimpleDeviceService) RegisterDevice(device *m.Device) (err error) {
 	//get the device, return if exists
-	exists, err := s.deviceRepo.Check(device.SN)
+	db, _ := fpm.Default().GetDatabase("pg")
+	total := 0
+	err = db.Model(device).Condition("sn = ? and status=1 ", device.SN).Count(&total).Error()
 	if err != nil {
 		return
 	}
-	if exists {
+	if total > 0 {
 		return
 	}
-	return s.deviceRepo.Create(device)
+	return db.Create(device).Error()
 }
 
 //GetDeviceInfo get the device info from the db
-func (s *SimpleDeviceService) GetDeviceInfo(sn string) (*m.Device, error) {
-	return s.deviceRepo.Get(sn)
+func (s *SimpleDeviceService) GetDeviceInfo(sn string) (device *m.Device, err error) {
+	db, _ := fpm.Default().GetDatabase("pg")
+	device = &m.Device{}
+	err = db.Model(device).Condition("sn = ? and status = 1", sn).First(device).Error()
+	return
 }
 
 //GetSetting get setting from the table project
@@ -97,11 +95,19 @@ func (s *SimpleDeviceService) GetSetting(appID string, projectID int64) (setting
 		}
 		return
 	}
-	setting, err = s.projectRepo.GetSetting(appID, projectID)
+	db, _ := fpm.Default().GetDatabase("pg")
+	proj := &m.Project{}
+
+	err = db.Model(proj).Condition("app_id = ? and project_id = ?", appID, projectID).First(proj).Error()
 	if err != nil {
 		return
 	}
+	setting = make(map[string]interface{})
+	err = utils.StringToStruct(proj.Setting, &setting)
 	err = s.cache.SetObject(key, setting, cacheDuration)
+	if err != nil {
+		return
+	}
 	return
 }
 
@@ -128,7 +134,7 @@ func (s *SimpleDeviceService) Receive(deviceType, brand, event, deviceID string)
 	}
 
 	// 从DB中获取
-	device, err := s.deviceRepo.Get(deviceID)
+	device, err := s.GetDeviceInfo(deviceID)
 	if err != nil {
 		return
 	}
