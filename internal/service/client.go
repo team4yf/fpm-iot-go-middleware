@@ -5,6 +5,7 @@ import (
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
 	"github.com/team4yf/yf-fpm-server-go/fpm"
 	"github.com/team4yf/yf-fpm-server-go/pkg/cache"
+	"github.com/team4yf/yf-fpm-server-go/pkg/db"
 )
 
 //ClientService for client data manager
@@ -14,26 +15,33 @@ type ClientService interface {
 }
 
 type simpleClientService struct {
-	app *fpm.Fpm
-	c   cache.Cache
+	app      *fpm.Fpm
+	c        cache.Cache
+	dbclient db.Database
 }
 
 //NewSimpleClientService Create a new simpleClientService
 func NewSimpleClientService(app *fpm.Fpm, c cache.Cache) ClientService {
+	dbclient, ok := app.GetDatabase("pg")
+	if !ok {
+		panic("db connect error")
+	}
 	service := &simpleClientService{
-		c:   c,
-		app: app,
+		c:        c,
+		app:      app,
+		dbclient: dbclient,
 	}
 	return service
 }
 
 func (s *simpleClientService) Get(appid, enviroment string) (client *model.Client, err error) {
 	client = &model.Client{}
-	db, ok := s.app.GetDatabase("pg")
-	if !ok {
-		return nil, errors.New("[clientService] Get database interface ")
-	}
-	err = db.Model(client).Condition("app_id = ? and enviroment = ?", appid, enviroment).First(client).Error()
+
+	q := db.NewQuery()
+	q.SetTable(client.TableName())
+	q.SetCondition("app_id = ? and enviroment = ?", appid, enviroment)
+
+	err = s.dbclient.First(q, client)
 	if err != nil {
 		return nil, errors.Wrap(err, "[clientService] Get error")
 	}
@@ -42,10 +50,9 @@ func (s *simpleClientService) Get(appid, enviroment string) (client *model.Clien
 
 func (s *simpleClientService) ListByCondition(expression string, conditions ...interface{}) (clients []*model.Client, err error) {
 	clients = make([]*model.Client, 0)
-	db, ok := s.app.GetDatabase("pg")
-	if !ok {
-		return nil, errors.New("[clientService] Get database interface ")
-	}
-	err = db.Model(model.Client{}).Condition(expression, conditions...).Find(&clients).Error()
+	q := db.NewQuery()
+	q.SetTable((model.Client{}).TableName())
+	q.SetCondition(expression, conditions...)
+	err = s.dbclient.First(q, &clients)
 	return
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
 	"github.com/team4yf/yf-fpm-server-go/ctx"
 	"github.com/team4yf/yf-fpm-server-go/fpm"
+	"github.com/team4yf/yf-fpm-server-go/pkg/db"
 )
 
 //CreateHandler create a new mqtt user
@@ -22,8 +23,10 @@ func CreateHandler() func(*ctx.Ctx, *fpm.Fpm) {
 		req.Status = 0
 		req.Password = utils.Sha256Encode(req.Password + req.Salt)
 		dbclient, _ := fpmApp.GetDatabase("pg")
-		count := 0
-		err = dbclient.Model(req).Condition("username = ? and app_id = ?", req.Username, req.AppID).Count(&count).Error()
+		var count int64
+		q := db.NewQuery()
+		q.SetTable(req.TableName()).SetCondition("username = ? and app_id = ?", req.Username, req.AppID)
+		err = dbclient.Count(q.BaseData, &count)
 		if err != nil {
 			c.Fail(err)
 			return
@@ -34,7 +37,8 @@ func CreateHandler() func(*ctx.Ctx, *fpm.Fpm) {
 			})
 			return
 		}
-		err = dbclient.Model(req).Create(&req).Error()
+
+		err = dbclient.Create(q.BaseData, &req)
 		if err != nil {
 			c.Fail(err)
 			return

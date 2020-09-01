@@ -9,6 +9,7 @@ import (
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
 	"github.com/team4yf/yf-fpm-server-go/fpm"
 	"github.com/team4yf/yf-fpm-server-go/pkg/cache"
+	"github.com/team4yf/yf-fpm-server-go/pkg/db"
 
 	m "github.com/team4yf/fpm-iot-go-middleware/internal/model"
 )
@@ -40,7 +41,8 @@ type DeviceService interface {
 
 //SimpleDeviceService the service object todo implement the interface
 type SimpleDeviceService struct {
-	cache cache.Cache
+	cache    cache.Cache
+	dbclient db.Database
 }
 
 //NewSimpleDeviceService create a new service
@@ -50,8 +52,13 @@ func NewSimpleDeviceService(c cache.Cache) DeviceService {
 	if instance != nil {
 		return instance
 	}
+	dbclient, ok := fpm.Default().GetDatabase("pg")
+	if !ok {
+		panic("db connect error")
+	}
 	service := &SimpleDeviceService{
-		cache: c,
+		cache:    c,
+		dbclient: dbclient,
 	}
 	instance = service
 	return service
@@ -59,24 +66,27 @@ func NewSimpleDeviceService(c cache.Cache) DeviceService {
 
 //RegisterDevice insert the device into the db
 func (s *SimpleDeviceService) RegisterDevice(device *m.Device) (err error) {
-	//get the device, return if exists
-	db, _ := fpm.Default().GetDatabase("pg")
-	total := 0
-	err = db.Model(device).Condition("sn = ? and status=1 ", device.SN).Count(&total).Error()
+	var total int64
+	q := db.NewQuery()
+	q.SetTable(device.TableName())
+	q.SetCondition("sn = ? and status=1 ", device.SN)
+	err = s.dbclient.Count(q.BaseData, &total)
 	if err != nil {
 		return
 	}
 	if total > 0 {
 		return
 	}
-	return db.Create(device).Error()
+	return s.dbclient.Create(q.BaseData, device)
 }
 
 //GetDeviceInfo get the device info from the db
 func (s *SimpleDeviceService) GetDeviceInfo(sn string) (device *m.Device, err error) {
-	db, _ := fpm.Default().GetDatabase("pg")
 	device = &m.Device{}
-	err = db.Model(device).Condition("sn = ? and status = 1", sn).First(device).Error()
+	q := db.NewQuery()
+	q.SetTable(device.TableName())
+	q.SetCondition("sn = ? and status = 1", sn)
+	err = s.dbclient.First(q, device)
 	return
 }
 
@@ -95,10 +105,11 @@ func (s *SimpleDeviceService) GetSetting(appID string, projectID int64) (setting
 		}
 		return
 	}
-	db, _ := fpm.Default().GetDatabase("pg")
 	proj := &m.Project{}
-
-	err = db.Model(proj).Condition("app_id = ? and project_id = ?", appID, projectID).First(proj).Error()
+	q := db.NewQuery()
+	q.SetTable(proj.TableName())
+	q.SetCondition("app_id = ? and project_id = ?", appID, projectID)
+	err = s.dbclient.First(q, proj)
 	if err != nil {
 		return
 	}
