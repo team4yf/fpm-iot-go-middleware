@@ -2,6 +2,7 @@ package device
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"sync"
 	"time"
@@ -138,37 +139,25 @@ func getJSONPathDataFromBiz(param *fpm.BizParam, jp string) (interface{}, error)
 	return res, nil
 }
 
-//CreateHandler 创建设备相关的
-func CreateHandler() func(*ctx.Ctx, *fpm.Fpm) {
-	return func(c *ctx.Ctx, fpmApp *fpm.Fpm) {
+//InitBiz 初始化相关的业务函数
+func InitBiz(fpmApp *fpm.Fpm) {
+	bizModule := make(fpm.BizModule, 0)
+	bizModule["create"] = func(param *fpm.BizParam) (data interface{}, err error) {
+		dvc := model.Device{}
 		// 从接口路径中获取参数
-		device := c.Param("type")
-		brand := c.Param("brand")
-
-		body := &fpm.BizParam{}
-		if err := c.ParseBody(&body); err != nil {
-			c.Fail(err)
+		if err = param.Convert(&dvc); err != nil {
 			return
 		}
 
-		data := &model.Device{}
-		data.AppID = (*body)["appId"].(string)
-		data.Brand = brand
-		data.Type = model.DeviceType(device)
-		data.ProjectID = int64((*body)["projectId"].(float64))
-		data.SN = (*body)["sn"].(string)
-		data.Status = 1
-		data.RegisterAt = time.Now()
-		data.LastUpdateAt = time.Now()
-
-		// TODO: save the device
-		if err := deviceService.RegisterDevice(data); err != nil {
-			c.Fail("can't register device")
+		dvc.Status = 1
+		dvc.RegisterAt = time.Now()
+		dvc.LastUpdateAt = time.Now()
+		if err = deviceService.RegisterDevice(&dvc); err != nil {
+			err = errors.New("can't register device")
 			return
 		}
-		c.JSON(map[string]int{
-			"errno": 0,
-		})
 
+		return dvc, nil
 	}
+	fpmApp.AddBizModule("device", &bizModule)
 }

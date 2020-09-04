@@ -20,7 +20,17 @@ Content-Type: application/json
 {"alarmType":"0","recordTime":"2020-08-11 18:03:56","imei":"{{sn}}"}
 
 ### 注册一个设备
-POST {{host}}/device/{{device}}/{{brand}}/create
+POST {{host}}/biz/device/create
 Content-Type: application/json
 
-{"sn": "{{sn}}","projectId": {{pid}},"appId": "{{appid}}"}
+{"type": "{{device}}","brand":"{{brand}}","sn": "{{sn}}aaa","projectId": {{pid}},"appId": "{{appid}}"}
+
+
+### 获取项目列表
+POST {{host}}/biz/common/findAndCount
+Content-Type: application/json
+
+{"table":"fim_project"}
+
+### Get 获取项目列表
+GET {{host}}/biz/common/findAndCount?table=fim_project&sort=name+

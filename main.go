@@ -9,6 +9,8 @@ import (
 	_ "github.com/team4yf/fpm-go-plugin-orm/plugins/pg"
 	_ "github.com/team4yf/fpm-go-plugin-tcp/plugin"
 	"github.com/team4yf/fpm-iot-go-middleware/consumer"
+	"github.com/team4yf/fpm-iot-go-middleware/handler/device"
+	"github.com/team4yf/fpm-iot-go-middleware/handler/mqttuser"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
 	"github.com/team4yf/fpm-iot-go-middleware/router"
@@ -36,8 +38,6 @@ func main() {
 
 	app.AddHook("AFTER_INIT", func(f *fpm.Fpm) {
 		router.LoadPushAPI(app)
-		router.LoadDeviceAPI(app)
-		router.LoadMQTTUserAPI(app)
 	}, 10)
 
 	app.Init()
@@ -71,5 +71,7 @@ func main() {
 		})
 	})
 
+	mqttuser.InitBiz(app)
+	device.InitBiz(app)
 	app.Run()
 }
