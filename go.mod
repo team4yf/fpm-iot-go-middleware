@@ -14,6 +14,7 @@ require (
 	github.com/spf13/afero v1.3.5 // indirect
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1
+	github.com/team4yf/fpm-go-pkg v0.0.0-20200907232440-9d0696cd0bdd
 	github.com/team4yf/fpm-go-plugin-cache-redis v0.1.0
 	github.com/team4yf/fpm-go-plugin-mqtt-client v0.0.3
 	github.com/team4yf/fpm-go-plugin-orm v0.0.4

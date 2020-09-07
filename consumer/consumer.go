@@ -5,11 +5,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/team4yf/fpm-go-pkg/utils"
 	"github.com/team4yf/fpm-iot-go-middleware/external/device/light"
 	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/message"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/service"
-	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
 	"github.com/team4yf/yf-fpm-server-go/fpm"
 )
 

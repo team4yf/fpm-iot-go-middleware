@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
-	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
+	"github.com/team4yf/fpm-go-pkg/utils"
 	"github.com/team4yf/yf-fpm-server-go/fpm"
 	"github.com/team4yf/yf-fpm-server-go/pkg/db"
 )

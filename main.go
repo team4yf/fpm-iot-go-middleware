@@ -13,7 +13,7 @@ import (
 	"github.com/team4yf/fpm-iot-go-middleware/handler/mqttuser"
 	"github.com/team4yf/fpm-iot-go-middleware/handler/project"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
-	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
+	"github.com/team4yf/fpm-go-pkg/utils"
 	"github.com/team4yf/fpm-iot-go-middleware/router"
 	"github.com/team4yf/yf-fpm-server-go/fpm"
 )

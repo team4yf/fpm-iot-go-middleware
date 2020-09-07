@@ -357,6 +357,10 @@ github.com/stretchr/testify v1.6.1 h1:hDPOHmpOpP40lSULcqw7IrRb/u7w6RpDC9399XyoNd
 github.com/stretchr/testify v1.6.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/h/Wwjteg=
 github.com/subosito/gotenv v1.2.0 h1:Slr1R9HxAlEKefgq5jn9U+DnETlIUa6HfgEzj0g5d7s=
 github.com/subosito/gotenv v1.2.0/go.mod h1:N0PQaV/YGNqwC0u51sEeR/aUtSLEXKX9iv69rRypqCw=
+github.com/team4yf/fpm-go-pkg v0.0.0-20200907232440-9d0696cd0bdd h1:mLWZ9xABUOUs4XH+jVD1S2pythxAKdejlWkcCV5RNQs=
+github.com/team4yf/fpm-go-pkg v0.0.0-20200907232440-9d0696cd0bdd/go.mod h1:XbqR6ji35BTcEgTean4+wXcImNniLBXv3Y6v4m289Lw=
+github.com/team4yf/fpm-go-pkg v0.0.0-20200907232930-67704d580ed7 h1:Aj3aR0AJbtGMaaFopjtSD6etjFDDfOQKpa6kgI2Mg+g=
+github.com/team4yf/fpm-go-pkg v0.0.0-20200907232930-67704d580ed7/go.mod h1:XbqR6ji35BTcEgTean4+wXcImNniLBXv3Y6v4m289Lw=
 github.com/team4yf/fpm-go-plugin-cache-redis v0.1.0 h1:FFsDgt0BnrfisjPnoVuhid/jFrM6QAdPfVNMkp/JoOw=
 github.com/team4yf/fpm-go-plugin-cache-redis v0.1.0/go.mod h1:T4QwzLyPv0dPPaTUSXwt3oXmRYDVRhhbuEbcmie2+2c=
 github.com/team4yf/fpm-go-plugin-mqtt-client v0.0.3 h1:ZjoNI+Jpu9IsznjlGtMRgYnvNLBbuvb6zXtXVdAJk4c=
