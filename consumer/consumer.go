@@ -60,6 +60,7 @@ func DefaultMqttConsumer(fpmApp *fpm.Fpm) func(interface{}, interface{}) {
 
 		appID, projID := header.AppID, header.ProjID
 		fpmApp.Logger.Debugf("the appID %s, the projID %d", appID, projID)
+		//Cache project exists status.
 		setting, err := deviceService.GetSetting(appID, projID)
 		if err != nil {
 			fpmApp.Logger.Errorf("Get setting of the appID %s, projID %d error: %v", appID, projID, err)

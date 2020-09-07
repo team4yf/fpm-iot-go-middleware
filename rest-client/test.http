@@ -34,3 +34,16 @@ Content-Type: application/json
 
 ### Get 获取项目列表
 GET {{host}}/biz/common/findAndCount?table=fim_project&sort=name+
+
+
+### 创建一个项目
+POST {{host}}/biz/project/create
+Content-Type: application/json
+
+{"appId": "{{appid}}","Name":"lucas","projectId": 2{{pid}},"code": "demo", "entryUrl": "", "setting": "{\"type\":\"lt10\"}"}
+
+### 更新一个项目
+POST {{host}}/biz/project/update
+Content-Type: application/json
+
+{"appId": "{{appid}}","projectId": 2{{pid}}, "setting": "{\"type\":\"lt11\"}"}

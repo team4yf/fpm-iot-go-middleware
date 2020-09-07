@@ -365,6 +365,8 @@ github.com/team4yf/fpm-go-plugin-orm v0.0.2 h1:uHN33Sm4ZjYpwVAZUtRizsXnMi6Do/eUd
 github.com/team4yf/fpm-go-plugin-orm v0.0.2/go.mod h1:vgvNp26RNWgUFvP7nBpcDY7p8/4MpzN3Wn6oB9Kf/ic=
 github.com/team4yf/fpm-go-plugin-orm v0.0.3 h1:AaHFQK7uqzGjseHlsh8ZXBGc90p+BjV7YOfdgtJwSwA=
 github.com/team4yf/fpm-go-plugin-orm v0.0.3/go.mod h1:WszH7zQxBpqV5NJIP3D4iQG8ZabBG0kdMYL7uLzeQSo=
+github.com/team4yf/fpm-go-plugin-orm v0.0.4 h1:gZtHpJoQJHcOPOdGr+a8WCIioYvYyJlykQtemxg+YZk=
+github.com/team4yf/fpm-go-plugin-orm v0.0.4/go.mod h1:WszH7zQxBpqV5NJIP3D4iQG8ZabBG0kdMYL7uLzeQSo=
 github.com/team4yf/fpm-go-plugin-tcp v0.1.3 h1:dnh/KJXBFUbvucDWYp9XjFsX/bXsoUzYsdZeCzmB34A=
 github.com/team4yf/fpm-go-plugin-tcp v0.1.3/go.mod h1:DBDNQT9dC1KyrE9NGqMSOgBCv7mNo1EFnWwIVeHFTnE=
 github.com/team4yf/yf-fpm-server-go v0.1.6/go.mod h1:+rErT87tSHsdZqSrBHMX0Jqg8M/enMwt/gx5WXyPxQk=
@@ -378,6 +380,8 @@ github.com/team4yf/yf-fpm-server-go v0.2.0 h1:CMJLkK5/xEEPQ6p8YUbIhmcWXDBaaBNAzz
 github.com/team4yf/yf-fpm-server-go v0.2.0/go.mod h1:Ibqll4MoF/dHGJdMKRYJBBDbcsHfHwDLx58ujZ/XydA=
 github.com/team4yf/yf-fpm-server-go v0.2.1 h1:1YmOM+BBsps1PLMHn6VveO4XolSjCadSkg1hCinA38c=
 github.com/team4yf/yf-fpm-server-go v0.2.1/go.mod h1:Ibqll4MoF/dHGJdMKRYJBBDbcsHfHwDLx58ujZ/XydA=
+github.com/team4yf/yf-fpm-server-go v0.2.3 h1:5diQXg+hZzmv0O455dL6O7woHPv6geQZqRTp9LIax4o=
+github.com/team4yf/yf-fpm-server-go v0.2.3/go.mod h1:Ibqll4MoF/dHGJdMKRYJBBDbcsHfHwDLx58ujZ/XydA=
 github.com/tebeka/strftime v0.1.5 h1:1NQKN1NiQgkqd/2moD6ySP/5CoZQsKa1d3ZhJ44Jpmg=
 github.com/tebeka/strftime v0.1.5/go.mod h1:29/OidkoWHdEKZqzyDLUyC+LmgDgdHo4WAFCDT7D/Ig=
 github.com/teris-io/shortid v0.0.0-20171029131806-771a37caa5cf h1:Z2X3Os7oRzpdJ75iPqWZc0HeJWFYNCvKsfpQwFpRNTA=
@@ -513,6 +517,8 @@ golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6 h1:DvY3Zkh7KabQE/kfzMvYvKirS
 golang.org/x/sys v0.0.0-20200826173525-f9321e4c35a6/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200831180312-196b9ba8737a h1:i47hUS795cOydZI4AwJQCKXOr4BvxzvikwDoDtHhP2Y=
 golang.org/x/sys v0.0.0-20200831180312-196b9ba8737a/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20200905004654-be1d3432aa8f h1:Fqb3ao1hUmOR3GkUOg/Y+BadLwykBIzs5q8Ez2SbHyc=
+golang.org/x/sys v0.0.0-20200905004654-be1d3432aa8f/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
@@ -599,6 +605,8 @@ gopkg.in/ini.v1 v1.60.1 h1:P5y5shSkb0CFe44qEeMBgn8JLow09MP17jlJHanke5g=
 gopkg.in/ini.v1 v1.60.1/go.mod h1:pNLf8WUiyNEtQjuu5G5vTm06TEv9tsIgeAvK8hOrP4k=
 gopkg.in/ini.v1 v1.60.2 h1:7i8mqModL63zqi8nQn8Q3+0zvSCZy1AxhBgthKfi4WU=
 gopkg.in/ini.v1 v1.60.2/go.mod h1:pNLf8WUiyNEtQjuu5G5vTm06TEv9tsIgeAvK8hOrP4k=
+gopkg.in/ini.v1 v1.61.0 h1:LBCdW4FmFYL4s/vDZD1RQYX7oAR6IjujCYgMdbHBR10=
+gopkg.in/ini.v1 v1.61.0/go.mod h1:pNLf8WUiyNEtQjuu5G5vTm06TEv9tsIgeAvK8hOrP4k=
 gopkg.in/resty.v1 v1.12.0/go.mod h1:mDo4pnntr5jdWRML875a/NmxYqAlA73dVijT2AXvQQo=
 gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 h1:uRGJdciOHaEIrze2W8Q3AKkepLTh2hOroT7a+7czfdQ=
 gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7/go.mod h1:dt/ZhP58zS4L8KSrWDmTeBkI65Dw0HsyUHuEVlX15mw=

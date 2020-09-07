@@ -11,24 +11,18 @@ import (
 	"github.com/team4yf/fpm-iot-go-middleware/consumer"
 	"github.com/team4yf/fpm-iot-go-middleware/handler/device"
 	"github.com/team4yf/fpm-iot-go-middleware/handler/mqttuser"
+	"github.com/team4yf/fpm-iot-go-middleware/handler/project"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
 	"github.com/team4yf/fpm-iot-go-middleware/pkg/utils"
 	"github.com/team4yf/fpm-iot-go-middleware/router"
 	"github.com/team4yf/yf-fpm-server-go/fpm"
 )
 
-func init() {
-
-}
-
-// var migration model.Migration
-
 func main() {
 	app := fpm.New()
 
 	app.AddHook("BEFORE_INIT", func(f *fpm.Fpm) {
 		// Init the model
-		// model.CreateDb()
 		dbclient, _ := app.GetDatabase("pg")
 		migrator := &model.Migration{
 			DS: dbclient,
@@ -73,5 +67,6 @@ func main() {
 
 	mqttuser.InitBiz(app)
 	device.InitBiz(app)
+	project.InitBiz(app)
 	app.Run()
 }

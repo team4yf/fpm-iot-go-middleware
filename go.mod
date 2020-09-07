@@ -16,13 +16,15 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/team4yf/fpm-go-plugin-cache-redis v0.1.0
 	github.com/team4yf/fpm-go-plugin-mqtt-client v0.0.3
-	github.com/team4yf/fpm-go-plugin-orm v0.0.3
+	github.com/team4yf/fpm-go-plugin-orm v0.0.4
 	github.com/team4yf/fpm-go-plugin-tcp v0.1.3
-	github.com/team4yf/yf-fpm-server-go v0.2.1
+	github.com/team4yf/yf-fpm-server-go v0.2.3
 	github.com/teris-io/shortid v0.0.0-20171029131806-771a37caa5cf
 	github.com/toolkits/net v0.0.0-20160910085801-3f39ab6fe3ce
 	go.uber.org/zap v1.16.0 // indirect
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a // indirect
 	golang.org/x/exp v0.0.0-20200831210406-1ff542fc73e3 // indirect
+	golang.org/x/sys v0.0.0-20200905004654-be1d3432aa8f // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	gopkg.in/ini.v1 v1.61.0 // indirect
 )
