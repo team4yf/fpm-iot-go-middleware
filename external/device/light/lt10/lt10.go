@@ -7,8 +7,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 	"github.com/team4yf/fpm-go-pkg/utils"
+	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 	"github.com/team4yf/yf-fpm-server-go/pkg/cache"
 )
 
@@ -58,9 +58,9 @@ func refreshToken(client *defaultClient, force bool) (token string, err error) {
 		token, err = client.cacher.GetString(key)
 		return
 	}
-	rspWrapper := utils.GetWithHeader(opts.BaseURL+apiURL["getAccessToken"], map[string]string{
+	rspWrapper := utils.GetWithHeader(opts.BaseURL+apiURL["getAccessToken"], 120, map[string]string{
 		"appId": opts.AppID,
-	}, 120)
+	})
 	if !rspWrapper.Success {
 		err = rspWrapper.Err
 		return
@@ -111,9 +111,9 @@ func (cli *defaultClient) Execute(api string, body interface{}) (rsp *rest.APIRe
 	data, _ := json.Marshal(body)
 	// log.Infof("Execute: %s", (string)(data))
 	opts := cli.options
-	rspWrapper := utils.PostJSONWithHeader(opts.BaseURL+apiURL[api], map[string]string{
+	rspWrapper := utils.PostJSONWithHeader(opts.BaseURL+apiURL[api], data, 120, map[string]string{
 		"accessToken": cli.token,
-	}, data, 120)
+	})
 	if !rspWrapper.Success {
 		err = rspWrapper.Err
 		return
