@@ -52,7 +52,7 @@ func PushHandler() func(*ctx.Ctx, *fpm.Fpm) {
 		// 获取设备的类型+品牌，从配置文件中获取对应的参数信息
 		deviceSpecificName := device + "-" + brand
 		// 记录下获取到的数据，用来进行日志查询
-		fpmApp.Logger.Debugf("Receive body: %+v\n deviceSpecificName: %s\n", body, deviceSpecificName)
+		fpmApp.Logger.Debugf("Receive body: %+v\ndeviceSpecificName: %s\n", body, deviceSpecificName)
 		if !viper.IsSet("notify." + deviceSpecificName) {
 			c.Fail("unKnown data source")
 			return
@@ -62,7 +62,6 @@ func PushHandler() func(*ctx.Ctx, *fpm.Fpm) {
 		go func() {
 			// 从配置文件中获取到设备平台推送的消息体中的 设备ID 的JsonPath
 			devicePath := fpmApp.GetConfig("notify." + deviceSpecificName + ".devicePath").(string)
-			fpmApp.Logger.Debugf("jsonPath: %s", devicePath)
 			res, err := getJSONPathDataFromBiz(body, devicePath)
 			if err != nil {
 				fpmApp.Logger.Errorf("device id not: %v", err)
@@ -119,7 +118,7 @@ func PushHandler() func(*ctx.Ctx, *fpm.Fpm) {
 		}()
 		// 响应配置文件中的内容
 		response := fpmApp.GetConfig("notify." + deviceSpecificName + ".response")
-		fpmApp.Logger.Debugf("device: %s brand:%s event:%s body:%s response:%s\n", device, brand, event, body, response)
+		// fpmApp.Logger.Debugf("device: %s brand:%s event:%s body:%s response:%s\n", device, brand, event, body, response)
 		c.JSON(response)
 	}
 }

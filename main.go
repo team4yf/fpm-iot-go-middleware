@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/team4yf/fpm-go-pkg/utils"
 	_ "github.com/team4yf/fpm-go-plugin-cache-redis/plugin"
 	_ "github.com/team4yf/fpm-go-plugin-mqtt-client/plugin"
 	_ "github.com/team4yf/fpm-go-plugin-orm/plugins/pg"
@@ -13,7 +14,6 @@ import (
 	"github.com/team4yf/fpm-iot-go-middleware/handler/mqttuser"
 	"github.com/team4yf/fpm-iot-go-middleware/handler/project"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/model"
-	"github.com/team4yf/fpm-go-pkg/utils"
 	"github.com/team4yf/fpm-iot-go-middleware/router"
 	"github.com/team4yf/yf-fpm-server-go/fpm"
 )
@@ -57,7 +57,7 @@ func main() {
 
 	app.Subscribe("#tcp/receive", func(_ string, data interface{}) {
 		body := data.(map[string]interface{})
-		app.Logger.Debugf("data: %X", body["data"])
+		app.Logger.Debugf("receive tcp data: %X", body["data"])
 		body["data"] = fmt.Sprintf("%x", body["data"])
 		app.Execute("mqttclient.publish", &fpm.BizParam{
 			"topic":   `$d2s/tcp`,
