@@ -61,8 +61,8 @@ func (device *JingxunEnvDevice) Parse(data *[]byte) (payload *message.D2SMessage
 	d2sPayload.Data = envPayload
 	d2sPayload.Device = &message.Device{
 		ID:      fmt.Sprintf("%X", sid),
-		Type:    "Env",
-		Brand:   "Jing Xun",
+		Type:    "env",
+		Brand:   "jingxun",
 		Version: device.Version(),
 	}
 	d2sPayload.Cgi = d2sPayload.Device.ID
