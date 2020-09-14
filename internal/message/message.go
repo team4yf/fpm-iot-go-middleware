@@ -67,3 +67,37 @@ type D2SFeedbackMessage struct {
 	Header   *Header      `json:"header"`
 	Feedback *D2SFeedback `json:"feedback"`
 }
+
+//EnvPayload env data struct
+// "min_wind_dir": 0,
+// "avg_wind_dir": 0,
+// "max_wind_dir": 0,
+// "min_wind_speed": 0,
+// "avg_wind_speed": 0,
+// "max_wind_speed": 2,
+// "temp":253,//温度值 （-550~1250）精度0.1
+// "humidity": 597,
+// "pressure": 10087,
+// "rainfall": 0,
+// "radiation": 0,
+// "u_rays": 0,
+// "noise": 562,
+// "pm2_5": 0,
+// "pm10": 0
+type EnvPayload struct {
+	Temp         int `json:"temp"`
+	MinWindDir   int `json:"min_wind_dir"`
+	AvgWindDir   int `json:"avg_wind_dir"`
+	MaxWindDir   int `json:"max_wind_dir"`
+	MinWindSpeed int `json:"min_wind_speed"`
+	AvgWindSpeed int `json:"avg_wind_speed"`
+	MaxWindSpeed int `json:"max_wind_speed"`
+	Humidity     int `json:"humidity"`
+	Pressure     int `json:"pressure"`
+	Radiation    int `json:"radiation"`
+	Rainfall     int `json:"rainfall"`
+	URays        int `json:"u_rays"`
+	Noise        int `json:"noise"`
+	PM25         int `json:"pm2_5"`
+	PM10         int `json:"pm10"`
+}

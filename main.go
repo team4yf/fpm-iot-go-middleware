@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/team4yf/fpm-go-pkg/utils"
+	"github.com/team4yf/fpm-iot-go-middleware/external/device/env"
+
 	_ "github.com/team4yf/fpm-go-plugin-cache-redis/plugin"
 	_ "github.com/team4yf/fpm-go-plugin-mqtt-client/plugin"
 	_ "github.com/team4yf/fpm-go-plugin-orm/plugins/pg"
@@ -55,14 +56,22 @@ func main() {
 		}
 	})
 
+	envDevice := env.NewEnvDevice("jingxun")
 	app.Subscribe("#tcp/receive", func(_ string, data interface{}) {
 		body := data.(map[string]interface{})
 		app.Logger.Debugf("receive tcp data: %X", body["data"])
-		body["data"] = fmt.Sprintf("%x", body["data"])
-		app.Execute("mqttclient.publish", &fpm.BizParam{
-			"topic":   `$d2s/tcp`,
-			"payload": ([]byte)(utils.JSON2String(body)),
-		})
+		buf := body["data"].([]byte)
+		envData, err := envDevice.Parse(&buf)
+		if err != nil {
+			fmt.Println(envData, err)
+			return
+		}
+
+		// body["data"] = fmt.Sprintf("%x", body["data"])
+		// app.Execute("mqttclient.publish", &fpm.BizParam{
+		// 	"topic":   `$d2s/tcp`,
+		// 	"payload": ([]byte)(utils.JSON2String(body)),
+		// })
 	})
 
 	mqttuser.InitBiz(app)
