@@ -8,7 +8,6 @@ import (
 
 	"github.com/team4yf/fpm-iot-go-middleware/internal/message"
 	"github.com/team4yf/fpm-iot-go-middleware/internal/service"
-	"github.com/team4yf/yf-fpm-server-go/fpm"
 )
 
 //JingxunEnvDevice the jingxun env device.
@@ -16,15 +15,8 @@ type JingxunEnvDevice struct {
 	deviceService service.DeviceService
 }
 
-var ()
-
 func (device *JingxunEnvDevice) Init() error {
-	app := fpm.Default()
-	c, exists := app.GetCacher()
-	if !exists {
-		return fmt.Errorf(`Cacher Not Inited!`)
-	}
-	device.deviceService = service.NewSimpleDeviceService(c)
+	device.deviceService = service.GetSimpleDeviceService()
 	return nil
 }
 
@@ -53,7 +45,7 @@ func (device *JingxunEnvDevice) Parse(data *[]byte) (payload *message.D2SMessage
 		err = fmt.Errorf("data protocol should be [fedc]")
 		return
 	}
-	sid := (*data)[9:13]
+	sid := (*data)[3:9]
 	temp := (*data)[16:20]
 	hu := (*data)[20:24]
 	pm25 := (*data)[24:28]
@@ -88,10 +80,12 @@ func (device *JingxunEnvDevice) Parse(data *[]byte) (payload *message.D2SMessage
 		Name:      "beat",
 		AppID:     uuid,
 		ProjID:    projid,
-		Source:    "HTTP",
+		Source:    "TCP",
 	}
-	payload.Header = msgHeader
-	payload.Payload = d2sPayload
+	payload = &message.D2SMessage{
+		Header:  msgHeader,
+		Payload: d2sPayload,
+	}
 
 	return
 }

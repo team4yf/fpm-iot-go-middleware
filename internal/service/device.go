@@ -20,7 +20,6 @@ const (
 
 var (
 	DEVICE_NOT_EXISTS = errors.New("not exists device")
-	instance          DeviceService
 	mux               sync.Mutex
 )
 
@@ -45,23 +44,22 @@ type SimpleDeviceService struct {
 	dbclient db.Database
 }
 
-//NewSimpleDeviceService create a new service
-func NewSimpleDeviceService(c cache.Cache) DeviceService {
+//GetSimpleDeviceService get or create a new service
+func GetSimpleDeviceService() DeviceService {
 	mux.Lock()
 	defer mux.Unlock()
-	if instance != nil {
-		return instance
-	}
 	dbclient, ok := fpm.Default().GetDatabase("pg")
 	if !ok {
 		panic("db connect error")
 	}
-	service := &SimpleDeviceService{
+	c, ok := fpm.Default().GetCacher()
+	if !ok {
+		panic("get cacher error")
+	}
+	return &SimpleDeviceService{
 		cache:    c,
 		dbclient: dbclient,
 	}
-	instance = service
-	return service
 }
 
 //RegisterDevice insert the device into the db

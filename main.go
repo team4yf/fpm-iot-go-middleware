@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/team4yf/fpm-go-pkg/utils"
 	"github.com/team4yf/fpm-iot-go-middleware/external/device/env"
 
 	_ "github.com/team4yf/fpm-go-plugin-cache-redis/plugin"
@@ -63,15 +64,15 @@ func main() {
 		buf := body["data"].([]byte)
 		envData, err := envDevice.Parse(&buf)
 		if err != nil {
-			fmt.Println(envData, err)
+			app.Logger.Errorf("parse env tcp data error: %v", err)
 			return
 		}
 
 		// body["data"] = fmt.Sprintf("%x", body["data"])
-		// app.Execute("mqttclient.publish", &fpm.BizParam{
-		// 	"topic":   `$d2s/tcp`,
-		// 	"payload": ([]byte)(utils.JSON2String(body)),
-		// })
+		app.Execute("mqttclient.publish", &fpm.BizParam{
+			"topic":   fmt.Sprintf(`$d2s/%s/partner/push`, envData.Header.AppID),
+			"payload": ([]byte)(utils.JSON2String(envData)),
+		})
 	})
 
 	mqttuser.InitBiz(app)

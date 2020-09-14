@@ -27,12 +27,7 @@ func Init() {
 	if isInited {
 		return
 	}
-	app := fpm.Default()
-	c, exists := app.GetCacher()
-	if !exists {
-		panic(`Cacher Not Inited!`)
-	}
-	deviceService = service.NewSimpleDeviceService(c)
+	deviceService = service.GetSimpleDeviceService()
 	isInited = true
 }
 
