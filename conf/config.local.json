@@ -39,7 +39,7 @@
     "socket": {
         "port": 5001,
         "max": 1024,
-        "prefix": ["6162"]
+        "prefix": ["fedc"]
     },
     "log":{
         "level": "DEBUG"

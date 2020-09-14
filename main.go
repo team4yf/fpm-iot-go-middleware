@@ -57,6 +57,8 @@ func main() {
 		}
 	})
 
+	// try in terminal: echo -n -e "\xfe\xdc\x01\x17\x1c\xb7\x40\xe3\x0f\x00\x00\x01\xde\x03\x00\x1c\x00\x00\x01\x0f\x00\x00\x01\xcb\x00\x00\x00\x34\x00\x00\x00\x4b\x00\x00\x00\x87\x00\x00\x00\x7a\x00\x00\x00\x14\x00" | nc localhost 5001
+	// and sub the topic: mosquitto_sub -h open.yunplus.io -t '$d2s/ceaa191a/partner/push' -u "fpmuser" -P
 	envDevice := env.NewEnvDevice("jingxun")
 	app.Subscribe("#tcp/receive", func(_ string, data interface{}) {
 		body := data.(map[string]interface{})
