@@ -8,6 +8,7 @@ endef
 
 all: install build docker-build docker-push
 
+local: install build docker-build-local docker-push
 install:
 	go mod download
 
@@ -20,10 +21,13 @@ build:
 build-prod:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -tags prod -o $(GOBIN)/app ./main.go
 sub:
-	mosquitto_sub -h open.yunplus.io -t '^push/$(uuid)/event' -u "admin" -P "123123123"
+	mosquitto_sub -h open.yunplus.io -t '$d2s/ceaa191a/partner/push' -u "fpmuser" -P
 
 pub:
-	mosquitto_pub -h open.yunplus.io -t '$d2s/aa/mcu20/push' -u "fpmuser" -P "fpmpassword" -m "test"
+	mosquitto_pub -h open.yunplus.io -t '$d2s/ceaa191a/partner/push' -u "fpmuser" -m "test"
+
+docker-build-local:
+	docker build -f Dockerfile-local --tag fpm-iot-middleware:v2.0 --tag yfsoftcom/fpm-iot-middleware:v2.0 .
 
 docker-build:
 	docker build --tag fpm-iot-middleware:v2.0 --tag yfsoftcom/fpm-iot-middleware:v2.0 .
