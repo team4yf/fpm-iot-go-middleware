@@ -7,7 +7,6 @@ import (
 	_ "github.com/team4yf/fpm-go-plugin-cache-redis/plugin"
 	_ "github.com/team4yf/fpm-go-plugin-mqtt-client/plugin"
 	_ "github.com/team4yf/fpm-go-plugin-orm/plugins/pg"
-	_ "github.com/team4yf/fpm-go-plugin-tcp/plugin"
 	"github.com/team4yf/fpm-iot-go-middleware/external/rest"
 	"github.com/team4yf/yf-fpm-server-go/fpm"
 )
@@ -16,7 +15,7 @@ var client rest.Client
 
 func Setup(t *testing.T) {
 
-	fpmApp := fpm.NewWithConfig("../../../../conf/config.test.json")
+	fpmApp := fpm.NewWithConfig("./conf/config.test.json")
 	fpmApp.Init()
 	options := &rest.Options{
 		AppID:       "LT0314fbf27a4d2986",
@@ -37,7 +36,7 @@ func Setup(t *testing.T) {
 
 func TestApis(t *testing.T) {
 	Setup(t)
-	imei := "866971039105809"
+	imei := "861050049029237"
 	req := []map[string]interface{}{
 		{
 			"circuit":      1,

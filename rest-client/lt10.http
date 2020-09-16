@@ -6,7 +6,7 @@
 
 @baseUrl=http://101.132.142.5:8088/api
 
-@token=eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MDE0MjI1MTcsInVzZXJJZCI6Mjk4LCJpYXQiOjE2MDAxMjY1MTcsImp0aSI6IkxUMDMxNGZiZjI3YTRkMjk4NiJ9.SfSom6J6PfsMby3Oo-i8DROwWXO4wGt5VOgIZa3Vexw
+@token=eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE2MDE1MjYxNjIsInVzZXJJZCI6Mjk4LCJpYXQiOjE2MDAyMzAxNjIsImp0aSI6IkxUMDMxNGZiZjI3YTRkMjk4NiJ9.IFQOWKJupgryOnylDWe_O1GVeQZ1yWW8wa3ptb5vOwc
 ### /auth/getAccessToken
 GET {{baseUrl}}/auth/getAccessToken
 Content-Type: application/json
@@ -22,7 +22,7 @@ Content-Type: application/json
   "circuit":1,
   "imei":"{{imei}}",
   "commandType":"BRIGHTNESS",
-  "commandValue": 20,
+  "commandValue": 30,
   "type": 2
 }]
 

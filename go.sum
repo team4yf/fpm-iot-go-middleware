@@ -365,6 +365,8 @@ github.com/team4yf/fpm-go-pkg v0.0.0-20200907232930-67704d580ed7 h1:Aj3aR0AJbtGM
 github.com/team4yf/fpm-go-pkg v0.0.0-20200907232930-67704d580ed7/go.mod h1:XbqR6ji35BTcEgTean4+wXcImNniLBXv3Y6v4m289Lw=
 github.com/team4yf/fpm-go-pkg v0.0.0-20200909075814-040cb22d0a7d h1:UdOFybs9h/ct4xFxcCLE7CMlkqraVPIYDxXAv8Hzun0=
 github.com/team4yf/fpm-go-pkg v0.0.0-20200909075814-040cb22d0a7d/go.mod h1:XbqR6ji35BTcEgTean4+wXcImNniLBXv3Y6v4m289Lw=
+github.com/team4yf/fpm-go-pkg v0.0.0-20200916043501-88fb1f56089b h1:wvdVkkq2yslAth7td3mGQTZJf6A8GrVQ1Ej1Xgdif1Y=
+github.com/team4yf/fpm-go-pkg v0.0.0-20200916043501-88fb1f56089b/go.mod h1:XbqR6ji35BTcEgTean4+wXcImNniLBXv3Y6v4m289Lw=
 github.com/team4yf/fpm-go-plugin-cache-redis v0.1.0 h1:FFsDgt0BnrfisjPnoVuhid/jFrM6QAdPfVNMkp/JoOw=
 github.com/team4yf/fpm-go-plugin-cache-redis v0.1.0/go.mod h1:T4QwzLyPv0dPPaTUSXwt3oXmRYDVRhhbuEbcmie2+2c=
 github.com/team4yf/fpm-go-plugin-mqtt-client v0.0.3 h1:ZjoNI+Jpu9IsznjlGtMRgYnvNLBbuvb6zXtXVdAJk4c=
