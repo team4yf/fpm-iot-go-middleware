@@ -1,6 +1,8 @@
 package consumer
 
 import (
+	"encoding/hex"
+	"fmt"
 	"testing"
 )
 
@@ -24,9 +26,8 @@ func TestSubstribe(t *testing.T) {
 	// app.Run(fmt.Sprintf("%v:%v",
 }
 
-
 func TestParseTCP(t *testing.T) {
-	s:= "FEDC01171CB740E30F0000000003001C0000010400000216000000160000001F000000890000007A0000001400"
+	s := "FEDC01171CB740E30F0000000003001C0000010400000216000000160000001F000000890000007A0000001400"
 	data, err := hex.DecodeString(s)
 	if err != nil {
 		panic(err)

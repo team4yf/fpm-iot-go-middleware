@@ -68,5 +68,36 @@ func InitBiz(fpmApp *fpm.Fpm) {
 
 		return req, nil
 	}
+	bizModule["sync"] = func(param *fpm.BizParam) (data interface{}, err error) {
+		var req model.Project
+		err = param.Convert(&req)
+		if err != nil {
+			return
+		}
+		req.Status = 1
+		dbclient, _ := fpmApp.GetDatabase("pg")
+		var count int64
+		q := db.NewQuery()
+		q.SetTable(req.TableName()).SetCondition("project_id = ? and app_id = ? and code = ?", req.ProjectID, req.AppID, req.Code)
+		err = dbclient.Count(q.BaseData, &count)
+		if err != nil {
+			return
+		}
+		if count < 1 {
+			//create
+			err = dbclient.Create(q.BaseData, &req)
+			return
+		}
+
+		//update
+		err = dbclient.Updates(q.BaseData, db.CommonMap{
+			"setting": req.Setting,
+		}, &count)
+		if err != nil {
+			return
+		}
+
+		return req, nil
+	}
 	fpmApp.AddBizModule("project", &bizModule)
 }
